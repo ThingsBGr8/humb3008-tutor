@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUMB3008 Clinical Neurophysiology — Socratic Tutor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #1B4332;
+    --gold: #C9972B;
+    --gold-light: #fdf3e0;
+    --bg: #f8f8f6;
+    --surface: #ffffff;
+    --surface2: #f3f3f0;
+    --border: rgba(0,0,0,0.1);
+    --border-md: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text-muted: #6b6b66;
+    --text-hint: #9b9b96;
+    --purple-bg: #EEEDFE;
+    --purple-text: #26215C;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --red-bg: #FCEBEB;
+    --red-text: #A32D2D;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  #app { width: 100%; max-width: 720px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── Shared header ── */
+  .unit-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+  }
+  .unit-logo {
+    width: 40px; height: 40px; flex-shrink: 0;
+    background: var(--green); border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .unit-logo svg { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .unit-title { font-size: 15px; font-weight: 600; }
+  .unit-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── API key + student identity screen ── */
+  #screen-apikey { display: none; flex-direction: column; align-items: center; padding-top: 48px; }
+  #screen-apikey.active { display: flex; }
+  .apikey-logo {
+    width: 56px; height: 56px; background: var(--green);
+    border-radius: var(--radius-lg);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .apikey-logo svg { width: 28px; height: 28px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .apikey-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; text-align: center; }
+  .apikey-sub { font-size: 14px; color: var(--text-muted); text-align: center; max-width: 420px; line-height: 1.6; margin-bottom: 28px; }
+  .setup-card {
+    width: 100%; max-width: 460px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 24px;
+  }
+  .setup-card .section-heading {
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .field-row { margin-bottom: 14px; }
+  .field-row label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .field-row input {
+    width: 100%; padding: 9px 12px; font-size: 14px;
+    border: 1px solid var(--border-md); border-radius: var(--radius-md);
+    background: var(--surface); color: var(--text); font-family: inherit;
+  }
+  .field-row input:focus { outline: none; border-color: var(--green); }
+  .field-row input.mono { font-family: monospace; }
+  .field-note { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-top: 5px; }
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .btn-primary {
+    width: 100%; padding: 11px; font-size: 14px; font-weight: 500;
+    background: var(--green); color: var(--gold); border: none;
+    border-radius: var(--radius-md); cursor: pointer; margin-top: 4px;
+  }
+  .btn-primary:hover { background: #0f2d22; }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .field-error { font-size: 12px; color: var(--red-text); margin-top: 5px; display: none; }
+
+  /* ── Topic select screen ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px;
+  }
+  .topic-grid { display: flex; flex-direction: column; gap: 6px; }
+  .topic-card {
+    padding: 13px 16px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    cursor: pointer; transition: border-color 0.12s, background 0.12s;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .topic-card:hover { border-color: var(--border-md); background: #fafaf8; }
+  .topic-num {
+    width: 32px; height: 32px; flex-shrink: 0;
+    background: var(--surface2); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+  }
+  .topic-card.special .topic-num { background: var(--gold-light); color: #7a5a0a; }
+  .topic-card.special { border-left: 3px solid var(--gold); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .topic-body { flex: 1; }
+  .topic-week { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+  .topic-name { font-size: 14px; font-weight: 500; }
+  .topic-lec { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+  .topic-arrow { color: var(--text-hint); font-size: 16px; }
+  .phase-divider {
+    font-size: 11px; font-weight: 600; color: var(--text-hint);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    padding: 14px 0 6px; display: flex; align-items: center; gap: 10px;
+  }
+  .phase-divider::before, .phase-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .student-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; margin-bottom: 14px;
+    background: var(--green-bg); border-radius: var(--radius-md);
+    font-size: 13px; color: var(--green-text);
+  }
+  .student-chip strong { font-weight: 600; }
+  .chip-change { font-size: 12px; color: var(--green-text); text-decoration: underline; cursor: pointer; margin-left: auto; opacity: 0.8; }
+  .chip-change:hover { opacity: 1; }
+
+  /* ── Chat screen ── */
+  #chat-header {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 14px;
+  }
+  .btn-back {
+    font-size: 12px; color: var(--text-muted);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 5px 11px; cursor: pointer;
+  }
+  .btn-back:hover { background: var(--surface2); }
+  #chat-topic-name { flex: 1; font-size: 13px; font-weight: 500; }
+  #exchange-badge {
+    font-size: 11px; padding: 3px 9px; border-radius: var(--radius-md);
+    background: var(--surface2); color: var(--text-muted); white-space: nowrap;
+  }
+  #exchange-badge.complete { background: var(--green-bg); color: var(--green-text); }
+  #chat-window {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 16px;
+    min-height: 360px; max-height: 460px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;
+  }
+  .msg { display: flex; gap: 9px; max-width: 88%; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .msg.assistant { align-self: flex-start; }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; margin-top: 2px;
+  }
+  .msg.assistant .avatar { background: var(--green); color: var(--gold); }
+  .msg.user .avatar { background: var(--surface2); color: var(--text-muted); }
+  .bubble {
+    padding: 10px 14px; border-radius: var(--radius-lg);
+    font-size: 14px; line-height: 1.65; color: var(--text);
+  }
+  .msg.assistant .bubble { background: var(--surface2); border: 1px solid var(--border); border-top-left-radius: 3px; }
+  .msg.user .bubble { background: var(--purple-bg); color: var(--purple-text); border-top-right-radius: 3px; }
+  .typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+  .typing-dots span { width: 6px; height: 6px; background: var(--text-hint); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .typing-dots span:nth-child(2) { animation-delay: .2s; }
+  .typing-dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+  #input-area { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
+  #user-input {
+    flex: 1; padding: 10px 13px; font-size: 14px;
+    border: 1px solid var(--border-md); border-radius: var(--radius-md);
+    resize: none; height: 42px; min-height: 42px; max-height: 120px;
+    font-family: inherit; background: var(--surface); color: var(--text); overflow-y: auto;
+  }
+  #user-input:focus { outline: none; border-color: var(--green); }
+  #send-btn {
+    padding: 10px 18px; font-size: 14px; font-weight: 500;
+    background: var(--green); color: var(--gold); border: none;
+    border-radius: var(--radius-md); cursor: pointer; white-space: nowrap;
+  }
+  #send-btn:hover { background: #0f2d22; }
+  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  #mic-btn {
+    width: 42px; height: 42px; flex-shrink: 0;
+    background: var(--surface); border: 1px solid var(--border-md);
+    border-radius: var(--radius-md); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+  }
+  #mic-btn:hover { background: var(--surface2); color: var(--text); }
+  #mic-btn.recording {
+    background: #FCEBEB; border-color: #A32D2D; color: #A32D2D;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  #mute-btn {
+    width: 30px; height: 30px; flex-shrink: 0;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: var(--radius-md); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+  }
+  #mute-btn:hover { background: var(--surface2); }
+  #mute-btn.muted { color: var(--red-text); border-color: var(--red-text); }
+  .bubble-replay {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; margin-left: 6px; vertical-align: middle;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 50%; cursor: pointer; color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .bubble-replay:hover { background: var(--surface2); color: var(--text); }
+  .speaking .bubble { border-color: var(--green); }
+  #end-row { text-align: center; margin-bottom: 4px; }
+  #end-btn {
+    font-size: 13px; color: var(--text-muted);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 8px 20px; cursor: pointer;
+  }
+  #end-btn:hover:not(:disabled) { background: var(--surface2); }
+  #end-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  #end-hint { font-size: 12px; color: var(--text-hint); margin-top: 5px; text-align: center; }
+
+  /* ── Submit screen ── */
+  #submit-header {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+  }
+  #submit-header span { font-size: 15px; font-weight: 600; }
+  .submit-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 14px;
+  }
+  .submit-card-label {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
+  }
+  #auto-summary { font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .generating { color: var(--text-hint); font-style: italic; font-size: 14px; }
+  .reflection-prompts { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 10px; }
+  #reflection-input {
+    width: 100%; min-height: 110px; padding: 10px 13px;
+    font-size: 14px; font-family: inherit; line-height: 1.65;
+    border: 1px solid var(--border-md); border-radius: var(--radius-md);
+    resize: vertical; background: var(--surface); color: var(--text);
+  }
+  #reflection-input:focus { outline: none; border-color: var(--green); }
+
+  /* ── Submit button states ── */
+  #submit-btn {
+    width: 100%; padding: 12px; font-size: 14px; font-weight: 500;
+    background: var(--green); color: var(--gold); border: none;
+    border-radius: var(--radius-md); cursor: pointer; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  #submit-btn:hover:not(:disabled) { background: #0f2d22; }
+  #submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .spinner {
+    width: 16px; height: 16px; border: 2px solid rgba(201,151,43,0.3);
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.7s linear infinite; display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-msg {
+    text-align: center; font-size: 13px; padding: 10px 14px;
+    border-radius: var(--radius-md); margin-bottom: 10px; display: none;
+  }
+  .status-msg.success { background: var(--green-bg); color: var(--green-text); }
+  .status-msg.error { background: var(--red-bg); color: var(--red-text); }
+
+  .canvas-note {
+    font-size: 13px; color: var(--text-muted); line-height: 1.65;
+    padding: 12px 14px; background: var(--gold-light);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+
+  .reflection-required {
+    font-size: 12px; color: var(--red-text); margin-top: 6px; display: none;
+  }
+
+  @media (max-width: 500px) {
+    body { padding: 12px 10px 40px; }
+    #chat-window { max-height: 380px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ SCREEN 1: Setup (API key + student identity) ══ -->
+  <div id="screen-apikey" class="screen active">
+    <div class="apikey-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="apikey-title">HUMB3008 Socratic Tutor</div>
+    <div class="apikey-sub">Enter your details to begin your tutorial session.</div>
+    <div class="setup-card">
+      <div class="section-heading">Your details</div>
+      <div class="field-row">
+        <label for="input-name">Full name</label>
+        <input type="text" id="input-name" placeholder="e.g. Jane Smith" autocomplete="name">
+      </div>
+      <div class="field-row">
+        <label for="input-sid">Student ID</label>
+        <input type="text" id="input-sid" placeholder="e.g. 12345678" autocomplete="off">
+        <div class="field-note">Your 8-digit Curtin student number.</div>
+      </div>
+
+      <button class="btn-primary" id="setup-btn">Start tutoring session</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: Topic select ══ -->
+  <div id="screen-select" class="screen">
+    <div class="unit-header">
+      <div class="unit-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div>
+        <div class="unit-title">HUMB3008 Clinical Neurophysiology</div>
+        <div class="unit-sub">Socratic tutor · Curtin Medical School · Semester 2, 2026</div>
+      </div>
+    </div>
+    <div id="student-chip" class="student-chip">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="chip-label">Student</span>
+      <span class="chip-change" id="chip-change">Change</span>
+    </div>
+    <div class="section-label">Select this week's tutorial topic</div>
+    <div class="topic-grid" id="topic-grid"></div>
+  </div>
+
+  <!-- ══ SCREEN 3: Chat ══ -->
+  <div id="screen-chat" class="screen">
+    <div class="unit-header">
+      <div class="unit-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div>
+        <div class="unit-title">HUMB3008 Clinical Neurophysiology</div>
+        <div class="unit-sub">Socratic tutor · Curtin Medical School · Semester 2, 2026</div>
+      </div>
+    </div>
+    <div id="chat-header">
+      <button class="btn-back" id="back-btn">← Topics</button>
+      <span id="chat-topic-name"></span>
+      <span id="exchange-badge">0 / 6 exchanges</span>
+      <button id="mute-btn" title="Toggle voice">
+        <svg id="mute-icon-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <svg id="mute-icon-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+    </div>
+    <div id="chat-window"></div>
+    <div id="input-area">
+      <textarea id="user-input" placeholder="Type your response... (Enter to send, Shift+Enter for new line)"></textarea>
+      <button id="mic-btn" title="Click to record voice input">
+        <svg id="mic-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <button id="send-btn">Send</button>
+    </div>
+    <div id="end-row">
+      <button id="end-btn" disabled>End session &amp; submit</button>
+    </div>
+    <div id="end-hint">Complete 6 exchanges to unlock submission</div>
+  </div>
+
+  <!-- ══ SCREEN 4: Submit ══ -->
+  <div id="screen-submit" class="screen">
+    <div class="unit-header">
+      <div class="unit-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div>
+        <div class="unit-title">HUMB3008 Clinical Neurophysiology</div>
+        <div class="unit-sub">Socratic tutor · Curtin Medical School · Semester 2, 2026</div>
+      </div>
+    </div>
+    <div id="submit-header">
+      <button class="btn-back" id="back-btn2">← Back to chat</button>
+      <span>Session summary &amp; submission</span>
+    </div>
+    <div class="submit-card">
+      <div class="submit-card-label">Auto-generated session summary</div>
+      <div id="auto-summary"><span class="generating">Generating your session summary…</span></div>
+    </div>
+    <div class="submit-card">
+      <div class="submit-card-label">Your reflection</div>
+      <div class="reflection-prompts">
+        Answer both questions in a few sentences:<br>
+        1. What concept became clearer to you during this session?<br>
+        2. What are you still uncertain about and want to revisit before the exam?
+      </div>
+      <textarea id="reflection-input" placeholder="Write your reflection here…"></textarea>
+      <div class="reflection-required" id="reflection-required">Please write a reflection before submitting.</div>
+    </div>
+    <button id="submit-btn">
+      <div class="spinner" id="submit-spinner"></div>
+      <span id="submit-btn-label">Submit to Canvas</span>
+    </button>
+    <div class="status-msg" id="status-success">
+      Submitted successfully — your session has been recorded. You're done for this week.
+    </div>
+    <div class="status-msg" id="status-error">
+      Submission failed. Please try again, or contact your lecturer if the problem persists.
+    </div>
+    <div class="canvas-note" id="canvas-note">
+      Clicking Submit sends your session summary and reflection directly to the unit record. This is a pass/fail submission — just show genuine engagement and a thoughtful reflection.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIGURATION — update these two values as needed
+// ═══════════════════════════════════════════════════════
+// ── Update PROXY_URL after deploying to Render ──
+const PROXY_URL = 'https://YOUR-APP-NAME.onrender.com';
+const SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbwRSGGufJ6bPtSEKg79Eq5l94Y0MXz8Z8ClHhFAd7DttHyq1mCdc8gXnatwfrNRDdmF/exec';
+const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
+const ELEVENLABS_VOICE_ID = 'DYkrAHD8iwork3YSUBbs';
+const ELEVENLABS_MODEL = 'eleven_flash_v2_5';
+// ═══════════════════════════════════════════════════════
+
+const TOPICS = [
+  {
+    phase: 'Phase 1 — Foundations (Weeks 1–4)',
+    week: 1, label: 'Introduction to clinical neurophysiology', lectures: 'L1',
+    special: false,
+    objectives: 'scope of the clinical neurophysiology profession, the nervous system as an electrical organ, overview of major tests (NCS, EEG, EP, PSG, ANS testing), components of a biopotential recording system, career pathways in neurophysiology',
+    opener: 'Welcome to your Week 1 tutorial. Before we dive in — in your own words, what do you think a clinical neurophysiologist actually does day to day? What kinds of questions do you think they are trying to answer about their patients?'
+  },
+  {
+    phase: null,
+    week: 2, label: 'Bioelectrical signals & extracellular fields', lectures: 'L2',
+    special: false,
+    objectives: 'action potential generation and propagation, synaptic potentials, volume conduction principles, near-field vs far-field potentials, how extracellular recording electrodes detect these signals',
+    opener: "Let's think about bioelectrical signals. Here's a starting question — when we record an EEG from the scalp, we're picking up electrical activity from neurons deep inside the brain. Why does any of that activity reach the scalp at all? What allows it to travel through tissue?"
+  },
+  {
+    phase: null,
+    week: 3, label: 'Amplifiers, filters & data acquisition', lectures: 'L3',
+    special: false,
+    objectives: 'differential amplification, CMRR, common-mode vs differential signals, high-pass and low-pass filters, aliasing, sampling rate, ADC resolution, signal averaging, noise reduction strategies',
+    opener: "Let's start with something fundamental. If you wanted to record a tiny electrical signal from the body — say, a few microvolts from the cortex — what are the main problems you would face before we even talk about any specific equipment?"
+  },
+  {
+    phase: null,
+    week: 4, label: 'Bioelectrodes, PNS anatomy & CNS disease', lectures: 'L4–L6',
+    special: false,
+    objectives: 'electrode-tissue interface, half-cell potential, electrode impedance, skin preparation; nerve fibre classification, NMJ physiology, peripheral neuropathies, GBS, CTS, MND, myasthenia gravis; CNS white matter tracts, MS demyelination mechanisms, cortical hyperexcitability, epilepsy syndromes, sleep neurobiology',
+    opener: "This week covers a lot of ground — electrodes, the peripheral nervous system, and CNS disease. Let's anchor in something that connects them all. Why does the quality of the electrode-skin interface matter so much in neurophysiology? What goes wrong, biologically, when that interface is poor?"
+  },
+  {
+    phase: 'Mid-semester',
+    week: 6, label: 'Mid-semester test preparation', lectures: 'L1–L6',
+    special: true,
+    objectives: 'instrumentation chain, biopotentials, electrode physics, amplifiers and filters, PNS disease biology, CNS disease mechanisms — identify gaps and consolidate understanding across all of Phase 1',
+    opener: "This is your pre-test review session. Rather than working through content I think you need, let's figure out where your understanding is strongest and where the gaps are. If I asked you to explain — in one minute — how a differential amplifier helps us record clean bioelectrical signals from a noisy body, what would you say?"
+  },
+  {
+    phase: 'Phase 2 — Clinical Testing (Weeks 7–10)',
+    week: 7, label: 'Nerve conduction studies', lectures: 'L7',
+    special: false,
+    objectives: 'CMAP and SNAP generation, motor and sensory NCS technique, conduction velocity calculation, axonal vs demyelinating NCS patterns, localisation logic, CTS, radiculopathy and neuropathy interpretation',
+    opener: "Nerve conduction studies measure how fast and how well a nerve conducts. Let's get at the mechanism. If a nerve is demyelinated — like in Guillain-Barré syndrome — what exactly happens to the signal as it tries to travel along that nerve? What does demyelination actually do at the level of the axon?"
+  },
+  {
+    phase: null,
+    week: 8, label: 'Evoked potentials — VEP, ABR & SSEP', lectures: 'L8',
+    special: false,
+    objectives: 'VEP technique and P100 wave, ABR waveform components and generators, SSEP pathways, signal averaging rationale, abnormal EP patterns in MS/optic neuritis/acoustic neuroma/myelopathy, IOM applications of SSEP',
+    opener: 'Evoked potentials are recorded by averaging hundreds of responses to repeated stimuli. Why do we need to average at all? What is the underlying problem that averaging is solving, and what does it assume about the signal versus the noise?'
+  },
+  {
+    phase: null,
+    week: 9, label: 'EEG — technical principles & normal variants', lectures: 'L9',
+    special: false,
+    objectives: '10-20 electrode placement system, referential vs bipolar montages, normal EEG rhythms by frequency band, EEG changes with age and state, artefact recognition and classification, normal variants versus pathological patterns',
+    opener: 'The 10-20 system places electrodes at standardised positions across the scalp. Why does the positioning matter — what would go wrong clinically if electrodes were placed inconsistently from patient to patient?'
+  },
+  {
+    phase: null,
+    week: 10, label: 'EEG — epilepsy, encephalopathy & interpretation', lectures: 'L10',
+    special: false,
+    objectives: 'cortical hyperexcitability mechanisms, inhibitory/excitatory imbalance, channelopathies, absence seizure EEG, JME, focal epilepsies, Lennox-Gastaut syndrome, EEG in encephalopathy, PNES differentiation, long-term monitoring indications',
+    opener: "Let's get to the biology of seizures. The EEG in absence epilepsy shows a very characteristic 3 Hz spike-and-wave discharge. That pattern reflects something specific happening in thalamocortical circuits. What do you think is happening at the level of neurons — why do large networks of cortical cells suddenly fire together at that frequency?"
+  },
+  {
+    phase: 'Phase 3 — Specialised Domains (Weeks 12–14)',
+    week: 12, label: 'Polysomnography, sleep disorders & ANS testing part 1', lectures: 'L11–L12',
+    special: false,
+    objectives: "PSG montage and sleep staging, OSA pathophysiology and cardiovascular consequences, narcolepsy and orexin deficiency, RLS/PLMD, REM sleep behaviour disorder as Parkinson's marker, MSLT/MWT protocols; ANS anatomy, dysautonomia, POTS, MSA, diabetic autonomic neuropathy, SSR and QSART",
+    opener: "Polysomnography records multiple signals simultaneously during sleep. Let's start with something that connects both lectures this week. The autonomic nervous system is active during sleep — its behaviour changes dramatically between NREM and REM. Why do you think that matters clinically, and what might go wrong if ANS regulation during sleep is disrupted?"
+  },
+  {
+    phase: null,
+    week: 13, label: 'ANS testing part 2', lectures: 'L13',
+    special: false,
+    objectives: 'cardiovagal tests, heart rate variability analysis, tilt-table test physiology, Valsalva manoeuvre phases, baroreflex sensitivity, interpreting combined autonomic profiles, clinical case mapping for syncope and dysautonomia',
+    opener: "The Valsalva manoeuvre is one of the most informative autonomic tests we have. Before we talk about the recording, let me ask you this — when you forcibly exhale against a closed airway, what happens to pressure inside your chest, and why should that affect your heart rate and blood pressure?"
+  },
+  {
+    phase: null,
+    week: 14, label: 'Intraoperative monitoring & safety/clinical practice', lectures: 'L14–L15',
+    special: false,
+    objectives: 'IOM indications and modalities, SSEP/MEP/EMG in surgery, alert criteria and surgical decision-making, anaesthesia effects on neurophysiological signals, electrical safety standards, patient risk management, GCP in neurophysiology, infection control, professional and ethical practice',
+    opener: "Intraoperative monitoring requires recording neurophysiological signals in an operating theatre — one of the most electrically hostile environments imaginable. What kinds of electrical interference do you think would be present in an OR that you wouldn't face in a standard neurophysiology lab, and why does that create problems for recording?"
+  }
+];
+
+function systemPrompt(t) {
+  return `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University (unit coordinator: Associate Professor Daniel Brown, Curtin Medical School). The student is completing their Week ${t.week} tutorial on: ${t.label}, reviewing ${t.lectures}.
+
+Key learning objectives for this session: ${t.objectives}
+
+YOUR ROLE AND RULES:
+- Never directly answer factual questions. Respond with guiding questions that lead the student to reason toward the answer themselves.
+- If a student is wrong, do not say "that's wrong." Instead probe their reasoning: "What makes you think that?" or "What would we expect to see if that were true?"
+- If a student is right, affirm briefly (one sentence maximum) then deepen with a follow-up question that extends their thinking.
+- Use analogies and thought experiments freely to scaffold understanding where students are stuck.
+- After every 4–5 exchanges, give one brief sentence noting what the student has grasped so far (framed positively), then continue probing.
+- If a student is still stuck after two attempts, offer a scaffolding hint — but frame it as a question, not a statement.
+- Keep responses concise: 2–4 sentences maximum per turn. This is a dialogue, not a lecture.
+- Maintain a warm, encouraging tone. You are genuinely interested in how this student thinks.
+- No bullet points or headers. Respond in natural conversational prose only.
+- Always keep clinical neurophysiology as the frame — link concepts back to what a neurophysiologist does and why it matters for patient care.`;
+}
+
+function summaryPrompt(t, history) {
+  const turns = history.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n');
+  return `You are writing a factual summary of a Socratic tutorial session for a student's record.
+
+Unit: HUMB3008 Clinical Neurophysiology, Curtin University
+Week ${t.week} tutorial: ${t.label} (reviewing ${t.lectures})
+
+Conversation:
+${turns}
+
+Write a single paragraph of 3–5 sentences summarising: (1) which topics and concepts were explored, (2) where the student showed active reasoning and engagement, and (3) any areas touched on that may benefit from further review. Write in third person ("The student…"). Be factual and constructive. Do not invent content not present in the conversation. No headings, no bullet points — flowing paragraph prose only.`;
+}
+
+// State
+let studentName = '';
+let studentID = '';
+let currentTopic = null;
+let history = [];
+let exchangeCount = 0;
+let isLoading = false;
+let autoSummaryText = '';
+let submitted = false;
+
+// ── Screen management ──
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── Build topic grid ──
+function buildTopicGrid() {
+  const grid = document.getElementById('topic-grid');
+  let lastPhase = null;
+  TOPICS.forEach(t => {
+    if (t.phase && t.phase !== lastPhase) {
+      const div = document.createElement('div');
+      div.className = 'phase-divider';
+      div.textContent = t.phase;
+      grid.appendChild(div);
+      lastPhase = t.phase;
+    }
+    const card = document.createElement('div');
+    card.className = 'topic-card' + (t.special ? ' special' : '');
+    card.innerHTML = `
+      <div class="topic-num">W${t.week}</div>
+      <div class="topic-body">
+        <div class="topic-week">Week ${t.week}${t.special ? ' — exam prep' : ''}</div>
+        <div class="topic-name">${t.label}</div>
+        <div class="topic-lec">${t.lectures}</div>
+      </div>
+      <div class="topic-arrow">›</div>`;
+    card.addEventListener('click', () => startTopic(t));
+    grid.appendChild(card);
+  });
+}
+
+// ── Start a topic session ──
+function startTopic(t) {
+  currentTopic = t;
+  history = [];
+  exchangeCount = 0;
+  isLoading = false;
+  autoSummaryText = '';
+  submitted = false;
+  document.getElementById('chat-topic-name').textContent = `Week ${t.week}: ${t.label}`;
+  document.getElementById('chat-window').innerHTML = '';
+  document.getElementById('user-input').value = '';
+  updateBadge();
+  document.getElementById('end-btn').disabled = true;
+  document.getElementById('end-hint').style.display = '';
+  show('screen-chat');
+  addMsg('assistant', t.opener, true);
+  history.push({ role: 'assistant', content: t.opener });
+}
+
+function updateBadge() {
+  const badge = document.getElementById('exchange-badge');
+  const n = Math.min(exchangeCount, 6);
+  badge.textContent = `${n} / 6 exchanges`;
+  if (exchangeCount >= 6) {
+    badge.classList.add('complete');
+    document.getElementById('end-btn').disabled = false;
+    document.getElementById('end-hint').style.display = 'none';
+  } else {
+    badge.classList.remove('complete');
+  }
+}
+
+function addMsg(role, text, autoSpeak=false) {
+  const cw = document.getElementById('chat-window');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const initials = role === 'assistant' ? 'T' : (studentName ? studentName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase() : 'S');
+  const replayBtn = role === 'assistant'
+    ? `<button class="bubble-replay" title="Replay audio"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>`
+    : '';
+  div.innerHTML = `<div class="avatar">${initials}</div><div class="bubble">${text.replace(/\n/g, '<br>')}${replayBtn}</div>`;
+  cw.appendChild(div);
+  cw.scrollTop = cw.scrollHeight;
+  if (role === 'assistant') {
+    const bubble = div.querySelector('.bubble');
+    const replay = div.querySelector('.bubble-replay');
+    if (replay) {
+      replay.addEventListener('click', () => speakText(text, bubble));
+    }
+    if (autoSpeak) speakText(text, bubble);
+  }
+}
+
+function showTyping() {
+  const cw = document.getElementById('chat-window');
+  const div = document.createElement('div');
+  div.className = 'msg assistant'; div.id = 'typing-indicator';
+  div.innerHTML = `<div class="avatar">T</div><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  cw.appendChild(div);
+  cw.scrollTop = cw.scrollHeight;
+}
+function removeTyping() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
+
+// ── API call ──
+async function callAPI(messages, system) {
+  const res = await fetch(`${PROXY_URL}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 1000,
+      system: system,
+      messages: messages
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.content?.[0]?.text || '';
+}
+
+// ── Send chat message ──
+async function sendMessage() {
+  const inp = document.getElementById('user-input');
+  const text = inp.value.trim();
+  if (!text || isLoading) return;
+  addMsg('user', text);
+  history.push({ role: 'user', content: text });
+  inp.value = ''; inp.style.height = '42px';
+  isLoading = true;
+  document.getElementById('send-btn').disabled = true;
+  showTyping();
+  try {
+    const reply = await callAPI(history, systemPrompt(currentTopic));
+    removeTyping();
+    addMsg('assistant', reply, true);
+    history.push({ role: 'assistant', content: reply });
+    exchangeCount++;
+    updateBadge();
+  } catch (e) {
+    removeTyping();
+    addMsg('assistant', `Error: ${e.message}. Please check your API key and try again.`);
+  }
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('user-input').focus();
+}
+
+// ── End session → generate summary ──
+async function endSession() {
+  show('screen-submit');
+  document.getElementById('auto-summary').innerHTML = '<span class="generating">Generating your session summary…</span>';
+  document.getElementById('reflection-input').value = '';
+  document.getElementById('status-success').style.display = 'none';
+  document.getElementById('status-error').style.display = 'none';
+  document.getElementById('reflection-required').style.display = 'none';
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn-label').textContent = 'Submit to Canvas';
+  document.getElementById('canvas-note').style.display = '';
+  submitted = false;
+  autoSummaryText = '';
+  try {
+    autoSummaryText = await callAPI(
+      [{ role: 'user', content: summaryPrompt(currentTopic, history) }],
+      'You write concise, factual summaries of student tutorial sessions. Respond with a single flowing paragraph only — no headings, no bullets, no preamble.'
+    );
+    document.getElementById('auto-summary').textContent = autoSummaryText;
+  } catch (e) {
+    autoSummaryText = 'Summary could not be generated automatically.';
+    document.getElementById('auto-summary').textContent = autoSummaryText;
+  }
+}
+
+// ── Submit to Power Automate ──
+async function submitSession() {
+  if (submitted) return;
+
+  const reflection = document.getElementById('reflection-input').value.trim();
+  if (!reflection) {
+    document.getElementById('reflection-required').style.display = 'block';
+    return;
+  }
+  document.getElementById('reflection-required').style.display = 'none';
+
+  const btn = document.getElementById('submit-btn');
+  const spinner = document.getElementById('submit-spinner');
+  const btnLabel = document.getElementById('submit-btn-label');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  btnLabel.textContent = 'Submitting…';
+  document.getElementById('status-success').style.display = 'none';
+  document.getElementById('status-error').style.display = 'none';
+
+  const payload = {
+    studentName: studentName,
+    studentID: studentID,
+    week: currentTopic.week,
+    topic: currentTopic.label,
+    exchanges: exchangeCount,
+    summary: autoSummaryText || document.getElementById('auto-summary').textContent,
+    reflection: reflection,
+    timestamp: new Date().toISOString()
+  };
+
+  // Google Apps Script accepts CORS POST via form-encoded body (no preflight)
+  try {
+    const res = await fetch(SUBMISSION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.status === 'success') {
+      submitted = true;
+      spinner.style.display = 'none';
+      btnLabel.textContent = 'Submitted';
+      document.getElementById('status-success').style.display = 'block';
+      document.getElementById('canvas-note').style.display = 'none';
+      return;
+    } else {
+      throw new Error(result.message || 'Script returned an error');
+    }
+  } catch (e) {
+    // Fall through to clipboard fallback
+    console.error('Submission error:', e);
+  }
+
+  // Clipboard fallback if fetch fails entirely
+  spinner.style.display = 'none';
+  btnLabel.textContent = 'Submit to Canvas';
+  btn.disabled = false;
+  const fallbackText = buildSubmissionText(payload);
+  try {
+    await navigator.clipboard.writeText(fallbackText);
+    document.getElementById('status-error').style.display = 'block';
+    document.getElementById('status-error').style.background = 'var(--gold-light)';
+    document.getElementById('status-error').style.color = '#7a5a0a';
+    document.getElementById('status-error').textContent = 'Could not reach the submission server. Your session text has been copied to your clipboard — please paste it into the Canvas assignment instead.';
+  } catch (clipErr) {
+    document.getElementById('status-error').style.display = 'block';
+    document.getElementById('status-error').textContent = 'Submission failed and clipboard copy also failed. Please contact your lecturer.';
+  }
+}
+
+function buildSubmissionText(payload) {
+  return `HUMB3008 Clinical Neurophysiology — Tutorial Engagement Submission
+Week ${payload.week}: ${payload.topic}
+Student: ${payload.studentName} (${payload.studentID})
+Date: ${new Date(payload.timestamp).toLocaleDateString('en-AU', {day:'numeric',month:'long',year:'numeric'})}
+Exchanges completed: ${payload.exchanges}
+
+────────────────────────────────
+SESSION SUMMARY (auto-generated)
+────────────────────────────────
+${payload.summary}
+
+────────────────────────────────
+STUDENT REFLECTION
+────────────────────────────────
+${payload.reflection}`;
+}
+
+// ── Setup screen ──
+document.getElementById('setup-btn').addEventListener('click', () => {
+  const name = document.getElementById('input-name').value.trim();
+  const sid = document.getElementById('input-sid').value.trim();
+  studentName = name || 'Student';
+  studentID = sid || 'Unknown';
+
+  document.getElementById('chip-label').textContent = `${studentName} · ${studentID}`;
+  show('screen-select');
+});
+
+// ── Navigation ──
+document.getElementById('chip-change').addEventListener('click', () => show('screen-apikey'));
+document.getElementById('back-btn').addEventListener('click', () => show('screen-select'));
+document.getElementById('back-btn2').addEventListener('click', () => show('screen-chat'));
+
+// ── Chat ──
+document.getElementById('send-btn').addEventListener('click', sendMessage);
+document.getElementById('user-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+document.getElementById('user-input').addEventListener('input', function () {
+  this.style.height = '42px';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+document.getElementById('end-btn').addEventListener('click', endSession);
+
+// ── Submit ──
+document.getElementById('submit-btn').addEventListener('click', submitSession);
+
+// ── Voice state ──
+let isMuted = false;
+let isRecording = false;
+let currentAudio = null;
+let recognition = null;
+
+// ── ElevenLabs TTS ──
+async function speakText(text, bubbleEl) {
+  if (isMuted) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  document.querySelectorAll('.msg.assistant').forEach(m => m.classList.remove('speaking'));
+  try {
+    const res = await fetch(`${PROXY_URL}/api/tts/${ELEVENLABS_VOICE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: text,
+        model_id: ELEVENLABS_MODEL,
+        voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+      })
+    });
+    if (!res.ok) throw new Error('TTS failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    if (bubbleEl) bubbleEl.closest('.msg').classList.add('speaking');
+    currentAudio.addEventListener('ended', () => {
+      if (bubbleEl) bubbleEl.closest('.msg').classList.remove('speaking');
+      URL.revokeObjectURL(url);
+      currentAudio = null;
+    });
+    currentAudio.play();
+  } catch(e) {
+    console.warn('TTS error:', e);
+  }
+}
+
+// ── Mute toggle ──
+document.getElementById('mute-btn').addEventListener('click', () => {
+  isMuted = !isMuted;
+  const btn = document.getElementById('mute-btn');
+  const iconOn = document.getElementById('mute-icon-on');
+  const iconOff = document.getElementById('mute-icon-off');
+  if (isMuted) {
+    btn.classList.add('muted');
+    iconOn.style.display = 'none';
+    iconOff.style.display = 'block';
+    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  } else {
+    btn.classList.remove('muted');
+    iconOn.style.display = 'block';
+    iconOff.style.display = 'none';
+  }
+});
+
+// ── Speech recognition (mic input) ──
+function initRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return null;
+  const r = new SpeechRecognition();
+  r.continuous = false;
+  r.interimResults = true;
+  r.lang = 'en-AU';
+  r.onresult = (e) => {
+    let transcript = '';
+    for (let i = 0; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript;
+    }
+    document.getElementById('user-input').value = transcript;
+    document.getElementById('user-input').style.height = '42px';
+    document.getElementById('user-input').style.height =
+      Math.min(document.getElementById('user-input').scrollHeight, 120) + 'px';
+  };
+  r.onend = () => {
+    isRecording = false;
+    const btn = document.getElementById('mic-btn');
+    btn.classList.remove('recording');
+    btn.title = 'Click to record voice input';
+  };
+  r.onerror = (e) => {
+    isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+    if (e.error !== 'no-speech') console.warn('Speech recognition error:', e.error);
+  };
+  return r;
+}
+
+document.getElementById('mic-btn').addEventListener('click', () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert('Your browser does not support voice input. Please use Chrome or Edge, or type your response.');
+    return;
+  }
+  if (isRecording) {
+    recognition.stop();
+    isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+  } else {
+    recognition = initRecognition();
+    recognition.start();
+    isRecording = true;
+    document.getElementById('mic-btn').classList.add('recording');
+    document.getElementById('mic-btn').title = 'Recording — click to stop';
+  }
+});
+
+buildTopicGrid();
+</script>
+</body>
+</html>
