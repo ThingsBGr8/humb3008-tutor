@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUMB3008 Clinical Neurophysiology — Socratic Tutor</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #1B4332;
+  --green-mid: #2d6a4f;
+  --green-light: #e8f3ee;
+  --gold: #C9972B;
+  --gold-light: #fdf3e0;
+  --gold-pale: #fdf8ee;
+  --bg: #f5f5f2;
+  --surface: #ffffff;
+  --surface2: #f0f0ec;
+  --border: rgba(0,0,0,0.09);
+  --border-md: rgba(0,0,0,0.15);
+  --text: #1a1a18;
+  --text-muted: #5a5a55;
+  --text-hint: #9a9a94;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.10), 0 3px 8px rgba(0,0,0,0.06);
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 60px;
+}
+
+/* ── HEADER ── */
+.site-header {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 0 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.header-logo {
+  width: 42px; height: 42px;
+  background: var(--green);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.header-logo svg { width: 22px; height: 22px; }
+.header-text { flex: 1; }
+.header-unit { font-size: 11px; font-family: 'Arial', sans-serif; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 2px; }
+.header-title { font-size: 15px; font-weight: 600; color: var(--green); font-family: 'Arial', sans-serif; }
+
+#app { width: 100%; max-width: 760px; }
+
+/* ── SCREEN MANAGEMENT ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── ENTRY SCREEN ── */
+#screen-entry {
+  padding-top: 20px;
+}
+.entry-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  box-shadow: var(--shadow);
+}
+.entry-eyebrow {
+  font-size: 11px; font-family: 'Arial', sans-serif; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px;
+}
+.entry-heading {
+  font-size: 22px; font-weight: 700; color: var(--green);
+  font-family: 'Arial', sans-serif; margin-bottom: 10px; line-height: 1.3;
+}
+.entry-desc {
+  font-size: 14px; color: var(--text-muted); line-height: 1.7;
+  font-family: 'Arial', sans-serif; margin-bottom: 28px;
+  border-left: 3px solid var(--gold); padding-left: 14px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label {
+  font-size: 11px; font-family: 'Arial', sans-serif; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);
+}
+.form-group input {
+  padding: 10px 14px; border: 1.5px solid var(--border-md);
+  border-radius: var(--radius); font-size: 14px; font-family: 'Arial', sans-serif;
+  background: var(--surface); color: var(--text);
+  transition: border-color 0.15s;
+  outline: none;
+}
+.form-group input:focus { border-color: var(--green); }
+.form-group-full { margin-bottom: 16px; }
+.form-group-full label {
+  display: block; font-size: 11px; font-family: 'Arial', sans-serif; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.form-group-full input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-md);
+  border-radius: var(--radius); font-size: 13px; font-family: 'Arial', sans-serif;
+  background: var(--surface2); color: var(--text);
+  transition: border-color 0.15s; outline: none;
+}
+.form-group-full input:focus { border-color: var(--green); }
+.key-note {
+  font-size: 12px; font-family: 'Arial', sans-serif; color: var(--text-hint);
+  margin-top: 5px; line-height: 1.5;
+}
+.btn-start {
+  width: 100%; padding: 13px; background: var(--green); color: white;
+  border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600;
+  font-family: 'Arial', sans-serif; cursor: pointer; margin-top: 8px;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.02em;
+}
+.btn-start:hover { background: var(--green-mid); }
+.btn-start:active { transform: scale(0.99); }
+.entry-footer {
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 12px; font-family: 'Arial', sans-serif; color: var(--text-hint);
+  line-height: 1.6;
+}
+
+/* ── TOPIC SELECT ── */
+#screen-select { padding-top: 8px; }
+.select-header { margin-bottom: 22px; }
+.select-greeting { font-size: 18px; font-weight: 600; color: var(--green); font-family: 'Arial', sans-serif; margin-bottom: 4px; }
+.select-sub { font-size: 14px; color: var(--text-muted); font-family: 'Arial', sans-serif; }
+
+.phase-label {
+  font-size: 10px; font-family: 'Arial', sans-serif; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-hint); margin: 20px 0 10px; padding-left: 2px;
+}
+.topic-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+.topic-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px;
+  cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  display: flex; align-items: flex-start; gap: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.topic-card:hover {
+  border-color: var(--green); box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+.topic-card.gold-accent { border-color: rgba(201,151,43,0.3); background: var(--gold-pale); }
+.topic-card.gold-accent:hover { border-color: var(--gold); }
+
+.topic-week {
+  min-width: 36px; height: 36px; background: var(--green-light);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: 'Arial', sans-serif;
+  color: var(--green); flex-shrink: 0;
+}
+.topic-card.gold-accent .topic-week { background: var(--gold-light); color: #8a5a00; }
+.topic-body { flex: 1; }
+.topic-title { font-size: 14px; font-weight: 600; color: var(--text); font-family: 'Arial', sans-serif; margin-bottom: 3px; }
+.topic-desc { font-size: 12px; color: var(--text-muted); font-family: 'Arial', sans-serif; line-height: 1.5; }
+.topic-arrow { color: var(--text-hint); font-size: 16px; align-self: center; margin-left: 4px; }
+
+/* ── CHAT SCREEN ── */
+#screen-chat { padding-top: 8px; }
+.chat-topbar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  padding-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+.btn-back {
+  background: none; border: 1.5px solid var(--border-md); border-radius: 8px;
+  padding: 6px 12px; font-size: 12px; font-family: 'Arial', sans-serif;
+  font-weight: 600; color: var(--text-muted); cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-back:hover { border-color: var(--green); color: var(--green); }
+.chat-topic-info { flex: 1; }
+.chat-topic-week { font-size: 10px; font-family: 'Arial', sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+.chat-topic-title { font-size: 14px; font-weight: 600; color: var(--green); font-family: 'Arial', sans-serif; }
+
+.exchange-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 11px; font-family: 'Arial', sans-serif; font-weight: 600;
+  color: var(--text-muted);
+}
+.exchange-badge.unlocked { background: var(--green-light); color: var(--green); border-color: rgba(27,67,50,0.2); }
+.exchange-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-hint); }
+.exchange-badge.unlocked .exchange-dot { background: var(--green); }
+
+.chat-window {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); min-height: 380px; max-height: 480px;
+  overflow-y: auto; padding: 20px; margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  scroll-behavior: smooth;
+}
+
+.msg { margin-bottom: 16px; display: flex; flex-direction: column; }
+.msg-assistant { align-items: flex-start; }
+.msg-user { align-items: flex-end; }
+
+.msg-label {
+  font-size: 10px; font-family: 'Arial', sans-serif; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-hint); margin-bottom: 5px;
+}
+.msg-bubble {
+  max-width: 88%; padding: 12px 16px; border-radius: 12px;
+  font-size: 14px; font-family: 'Arial', sans-serif; line-height: 1.65;
+}
+.msg-assistant .msg-bubble {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); border-bottom-left-radius: 4px;
+}
+.msg-user .msg-bubble {
+  background: var(--green); color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.typing-indicator {
+  display: flex; gap: 5px; align-items: center;
+  padding: 12px 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 12px;
+  border-bottom-left-radius: 4px; width: fit-content;
+}
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--text-hint);
+  animation: bounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+.chat-input-row {
+  display: flex; gap: 8px; align-items: flex-end;
+}
+.chat-textarea {
+  flex: 1; padding: 10px 14px; border: 1.5px solid var(--border-md);
+  border-radius: var(--radius); font-size: 14px; font-family: 'Arial', sans-serif;
+  resize: none; min-height: 42px; max-height: 110px; line-height: 1.5;
+  background: var(--surface); color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.chat-textarea:focus { border-color: var(--green); }
+.btn-send {
+  padding: 10px 18px; background: var(--green); color: white;
+  border: none; border-radius: var(--radius); font-size: 13px; font-weight: 700;
+  font-family: 'Arial', sans-serif; cursor: pointer; flex-shrink: 0;
+  transition: background 0.15s;
+  height: 42px;
+}
+.btn-send:hover { background: var(--green-mid); }
+.btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.chat-actions {
+  display: flex; justify-content: flex-end; margin-top: 14px;
+}
+.btn-end {
+  padding: 10px 22px; background: white; color: var(--green);
+  border: 2px solid var(--green); border-radius: var(--radius);
+  font-size: 13px; font-weight: 700; font-family: 'Arial', sans-serif;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.btn-end:hover { background: var(--green); color: white; }
+.btn-end:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── SUBMIT SCREEN ── */
+#screen-submit { padding-top: 8px; }
+.submit-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 30px 36px;
+  box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.submit-heading {
+  font-size: 17px; font-weight: 700; font-family: 'Arial', sans-serif;
+  color: var(--green); margin-bottom: 4px;
+}
+.submit-sub {
+  font-size: 13px; font-family: 'Arial', sans-serif; color: var(--text-muted);
+  margin-bottom: 22px; line-height: 1.5;
+}
+.summary-box {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+  font-size: 13px; font-family: 'Arial', sans-serif; line-height: 1.7;
+  color: var(--text); margin-bottom: 20px; min-height: 80px;
+}
+.summary-label {
+  font-size: 10px; font-family: 'Arial', sans-serif; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint);
+  margin-bottom: 8px;
+}
+.reflection-label {
+  font-size: 10px; font-family: 'Arial', sans-serif; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint);
+  margin-bottom: 8px;
+}
+.reflection-hint {
+  font-size: 12px; font-family: 'Arial', sans-serif; color: var(--text-hint);
+  font-style: italic; margin-bottom: 10px; line-height: 1.5;
+}
+#reflection-input {
+  width: 100%; min-height: 110px; padding: 12px 16px;
+  border: 1.5px solid var(--border-md); border-radius: var(--radius);
+  font-size: 14px; font-family: 'Arial', sans-serif; line-height: 1.65;
+  resize: vertical; background: var(--surface); color: var(--text);
+  outline: none; transition: border-color 0.15s;
+}
+#reflection-input:focus { border-color: var(--green); }
+
+.submit-actions {
+  display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap;
+}
+.btn-submit {
+  flex: 1; min-width: 180px; padding: 12px 20px;
+  background: var(--green); color: white; border: none;
+  border-radius: var(--radius); font-size: 14px; font-weight: 700;
+  font-family: 'Arial', sans-serif; cursor: pointer;
+  transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-submit:hover { background: var(--green-mid); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-copy-fallback {
+  padding: 12px 20px; background: white; color: var(--text-muted);
+  border: 1.5px solid var(--border-md); border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; font-family: 'Arial', sans-serif;
+  cursor: pointer; transition: border-color 0.15s, color 0.15s;
+}
+.btn-copy-fallback:hover { border-color: var(--text-muted); color: var(--text); }
+
+/* Status messages */
+.status-msg {
+  display: none; margin-top: 14px; padding: 12px 16px;
+  border-radius: var(--radius); font-size: 13px; font-family: 'Arial', sans-serif;
+  line-height: 1.5;
+}
+.status-success { background: var(--green-light); color: var(--green); border: 1px solid rgba(27,67,50,0.2); display: none; }
+.status-error { background: #fef2f2; color: #b91c1c; border: 1px solid rgba(185,28,28,0.2); display: none; }
+.status-copied { background: var(--gold-light); color: #8a5a00; border: 1px solid rgba(201,151,43,0.3); display: none; }
+
+/* Spinner */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-back2 {
+  background: none; border: none; font-size: 13px; font-family: 'Arial', sans-serif;
+  color: var(--text-hint); cursor: pointer; padding: 4px 0;
+  margin-bottom: 16px; text-decoration: underline;
+}
+.btn-back2:hover { color: var(--text-muted); }
+
+@media (max-width: 520px) {
+  .entry-card { padding: 24px 20px; }
+  .form-row { grid-template-columns: 1fr; }
+  .submit-card { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#C9972B" opacity="0.3"/>
+      <path d="M9 12l2 2 4-4M12 6v1M12 17v1M6 12H5M19 12h-1" stroke="#C9972B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="header-text">
+    <div class="header-unit">HUMB3008 · Curtin Medical School</div>
+    <div class="header-title">Clinical Neurophysiology — Socratic Tutor</div>
+  </div>
+</header>
+
+<div id="app">
+
+  <!-- ── ENTRY SCREEN ── -->
+  <div id="screen-entry" class="screen active">
+    <div class="entry-card">
+      <div class="entry-eyebrow">Tutorial Engagement Activity</div>
+      <div class="entry-heading">Welcome to your Socratic tutor</div>
+      <div class="entry-desc">
+        This tutor replaces the face-to-face tutorial. Work through at least 6 exchanges with the tutor before submitting. Your session summary and reflection are submitted directly to the unit record.
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>First &amp; Last Name</label>
+          <input type="text" id="input-name" placeholder="e.g. Jane Smith" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label>Student ID</label>
+          <input type="text" id="input-sid" placeholder="e.g. 20123456" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-group-full">
+        <label>API Key</label>
+        <input type="password" id="input-apikey" placeholder="sk-ant-api03-..." autocomplete="off">
+        <div class="key-note">Your API key is used only in your browser and is never stored or sent to anyone other than Anthropic. <a href="https://console.anthropic.com/" target="_blank" style="color:var(--green);">Get a key →</a></div>
+      </div>
+
+      <button class="btn-start" onclick="startApp()">Continue to topic selection →</button>
+
+      <div class="entry-footer">
+        Submission goes directly to the HUMB3008 unit record in OneDrive/Excel. You do not need to copy anything to Canvas.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOPIC SELECT SCREEN ── -->
+  <div id="screen-select" class="screen">
+    <div class="select-header">
+      <div class="select-greeting" id="select-greeting">Choose your tutorial topic</div>
+      <div class="select-sub">Select the topic for this week's tutorial session.</div>
+    </div>
+    <div id="topic-list"></div>
+  </div>
+
+  <!-- ── CHAT SCREEN ── -->
+  <div id="screen-chat" class="screen">
+    <div class="chat-topbar">
+      <button class="btn-back" id="btn-back" onclick="goBack()">← Topics</button>
+      <div class="chat-topic-info">
+        <div class="chat-topic-week" id="chat-week-label"></div>
+        <div class="chat-topic-title" id="chat-topic-title"></div>
+      </div>
+      <div class="exchange-badge" id="exchange-badge">
+        <div class="exchange-dot"></div>
+        <span id="exchange-text">0 / 6 exchanges</span>
+      </div>
+    </div>
+
+    <div class="chat-window" id="chat-window"></div>
+
+    <div class="chat-input-row">
+      <textarea class="chat-textarea" id="user-input" placeholder="Type your response…" rows="1"></textarea>
+      <button class="btn-send" id="btn-send">Send</button>
+    </div>
+
+    <div class="chat-actions">
+      <button class="btn-end" id="btn-end" disabled>End session &amp; submit →</button>
+    </div>
+  </div>
+
+  <!-- ── SUBMIT SCREEN ── -->
+  <div id="screen-submit" class="screen">
+    <button class="btn-back2" onclick="show('screen-chat')">← Back to chat</button>
+
+    <div class="submit-card">
+      <div class="submit-heading" id="submit-heading">Session complete</div>
+      <div class="submit-sub" id="submit-sub">Review your session summary below, write your reflection, then submit.</div>
+
+      <div class="summary-label">Session Summary (auto-generated)</div>
+      <div class="summary-box" id="auto-summary">Generating summary…</div>
+
+      <div class="reflection-label">Your Reflection</div>
+      <div class="reflection-hint">What was the most important thing you learned? Where did your thinking shift? What questions remain?</div>
+      <textarea id="reflection-input" placeholder="Write your reflection here…"></textarea>
+
+      <div class="submit-actions">
+        <button class="btn-submit" id="btn-submit" onclick="submitSession()">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-submit-label">Submit to unit record</span>
+        </button>
+        <button class="btn-copy-fallback" onclick="copyFallback()">Copy as text (backup)</button>
+      </div>
+
+      <div class="status-success" id="status-success">
+        ✓ Submitted successfully. Your session has been recorded in the unit record. You do not need to submit anything to Canvas.
+      </div>
+      <div class="status-error" id="status-error">
+        Could not reach the submission server. Please use the "Copy as text" button and paste into the Canvas assignment instead.
+      </div>
+      <div class="status-copied" id="status-copied">
+        ✓ Copied to clipboard. Paste into the Canvas assignment submission box.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIGURATION — update SUBMISSION_URL with your Power Automate HTTP trigger URL
+// ─────────────────────────────────────────────
+const SUBMISSION_URL = 'https://default5a740cd757684d09ae13f706b09fa2.2c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/81b888c361a84a3993e829a46b75f3d3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kulZsFbVHUSsy4Zq78GlFcoMcOGp2dawKPInlndwd_E';
+
+const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages';
+
+// ─────────────────────────────────────────────
+// TOPIC DATA — 11 tutorial topics from the 2026 program calendar
+// ─────────────────────────────────────────────
+const TOPICS = [
+  {
+    week: 1, phase: 1,
+    label: 'Introduction to Clinical Neurophysiology',
+    desc: 'Scope of the profession, the nervous system as an electrical organ',
+    objectives: [
+      'Explain why the nervous system generates electrical signals and why these are clinically measurable',
+      'Distinguish between the major clinical neurophysiology modalities and the clinical questions each addresses',
+      'Describe how signal amplitude, frequency, and timing relate to the underlying biology'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has just completed Lecture 1 on the scope of the profession and the nervous system as an electrical organ.
+
+Your role is to guide the student to deep understanding through questions and guided reasoning — never simply provide answers. When a student gives an incomplete answer, probe further. When they give a correct answer, push to a higher level of understanding or a new application.
+
+Begin by asking: "Before we dive in — in your own words, why do you think the nervous system generates electrical signals at all? What's the biological reason we can record these from outside the body?"`
+  },
+  {
+    week: 2, phase: 1,
+    label: 'Bioelectrical Signals & Extracellular Fields',
+    desc: 'Action potentials, volume conduction, near- vs far-field potentials',
+    objectives: [
+      'Explain how an action potential generates an extracellular field potential',
+      'Describe volume conduction and how it affects recorded signal morphology',
+      'Distinguish near-field from far-field potentials with clinical examples'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has just completed Lecture 2 on bioelectrical signals and extracellular fields.
+
+Your role is to guide understanding through questions — never give direct answers. Probe, challenge, and build understanding step by step.
+
+Begin with: "Let's start with something fundamental. When a single axon fires an action potential, a recording electrode sitting on the skin surface picks up a tiny voltage deflection. Walk me through why — what's actually happening at the membrane that creates a field we can detect centimetres away?"`
+  },
+  {
+    week: 3, phase: 1,
+    label: 'Amplifiers, Filters & Data Acquisition',
+    desc: 'Differential amplification, filter settings, ADC, signal-to-noise',
+    objectives: [
+      'Explain how differential amplification rejects common-mode noise',
+      'Describe the effect of high-pass and low-pass filter settings on recorded waveforms',
+      'Explain sampling rate and bit depth in the context of clinical neurophysiology signals'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 3 on amplifiers, filters, and data acquisition.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "Imagine you're recording an EEG and there's enormous 50 Hz mains interference drowning out the signal. A colleague suggests just using a notch filter to remove it. Why might an experienced neurophysiologist be cautious about that approach — what could you be hiding by filtering out 50 Hz?"`
+  },
+  {
+    week: 4, phase: 1,
+    label: 'PNS & CNS Biology — Anatomy, Physiology & Disease',
+    desc: 'Nerve fibre classification, demyelination, MS, GBS, peripheral neuropathies',
+    objectives: [
+      'Distinguish axonal from demyelinating pathology at the cellular and electrophysiological level',
+      'Explain the pathophysiology of MS, GBS, and CTS in terms of the underlying nerve biology',
+      'Predict the expected electrophysiological findings for a given pathological mechanism'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lectures 5 and 6 covering PNS and CNS anatomy, physiology and disease.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "Here's a clinical scenario: a patient presents with progressive limb weakness over 3 weeks, absent reflexes, and mildly elevated CSF protein. Before we even think about recording, I want you to reason through the biology — what structure do you think is being attacked, and what cellular mechanism might explain the absent reflexes?"`
+  },
+  {
+    week: 7, phase: 2,
+    label: 'Nerve Conduction Studies',
+    desc: 'CMAP, SNAP, conduction velocity; axonal vs demyelinating patterns',
+    objectives: [
+      'Explain the physiological basis of CMAP and SNAP generation',
+      'Calculate and interpret motor and sensory conduction velocity',
+      'Distinguish axonal from demyelinating NCS patterns with reference to the underlying pathology'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 7 on nerve conduction studies.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "Let's work through a real measurement. In a motor NCS of the median nerve, you stimulate at the wrist and record from the thenar muscles — you get a CMAP with onset latency 3.8 ms and amplitude 8 mV. You then stimulate at the elbow and get onset latency 7.6 ms. Walk me through how you would calculate the conduction velocity and what that number is actually telling you about the axons."`
+  },
+  {
+    week: 8, phase: 2,
+    label: 'Sensory Evoked Potentials',
+    desc: 'VEP, SSEP, ABR — generation, normal morphology, pathological interpretation',
+    objectives: [
+      'Explain the neural generators of VEP, SSEP, and ABR waveform components',
+      'Describe the clinical utility of each modality for lesion localisation',
+      'Interpret abnormal latency and amplitude findings in terms of pathway pathology'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 8 on sensory evoked potentials.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "A patient with known MS has a pattern-reversal VEP. You record a P100 with a latency of 130 ms in the right eye and 102 ms in the left. The amplitude is normal bilaterally. Before I tell you what this means clinically, reason through it — what does that prolonged latency tell you about what's happened to the visual pathway on the right side, and where anatomically is the lesion most likely to be?"`
+  },
+  {
+    week: 9, phase: 2,
+    label: 'EEG — Principles & Clinical Application',
+    desc: 'Cortical generators, normal rhythms, epileptiform activity, focal vs generalised patterns',
+    objectives: [
+      'Explain how cortical postsynaptic potentials generate scalp EEG signals',
+      'Identify and explain normal EEG rhythms (alpha, beta, theta, delta) and their functional significance',
+      'Distinguish focal from generalised epileptiform patterns and their clinical correlates'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed lectures on EEG principles and clinical application.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "Here's something that surprises most people when they first encounter EEG: the signals we record on the scalp are generated by postsynaptic potentials, not action potentials — even though action potentials are much larger. Why do you think that is? What is it about postsynaptic potentials that makes them detectable at the scalp?"`
+  },
+  {
+    week: 10, phase: 2,
+    label: 'Polysomnography & Sleep Disorders',
+    desc: 'Sleep staging, PSG montage, OSA, REM sleep behaviour disorder, narcolepsy',
+    objectives: [
+      'Explain the physiological basis of sleep stage scoring using EEG, EOG, and EMG',
+      'Describe the PSG findings characteristic of OSA, RSBD, and narcolepsy',
+      'Explain why each PSG channel is necessary for accurate staging and disorder detection'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 11 on polysomnography and sleep disorders.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "PSG uses at least three physiological signals to stage sleep — EEG, EOG, and chin EMG. I want you to think about why we need all three. If you only had the EEG, what sleep stages could you confidently identify, and where would you run into trouble?"`
+  },
+  {
+    week: 12, phase: 2,
+    label: 'Autonomic Nervous System Testing',
+    desc: 'Sympathetic and parasympathetic assessment — HRV, tilt table, Valsalva, SSR',
+    objectives: [
+      'Explain the physiological basis of cardiovagal and sudomotor ANS tests',
+      'Interpret HRV, Valsalva ratio, and orthostatic BP changes in terms of ANS function',
+      'Describe how combined autonomic testing builds a profile of dysfunction'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed lectures on autonomic nervous system testing.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "A patient stands up from lying and their systolic BP drops 25 mmHg after 3 minutes, with heart rate increasing by only 4 bpm. A normal person's heart rate would rise 10–15 bpm in that situation. Walk me through what this pattern tells you — which part of the autonomic system is failing to respond appropriately, and what's the underlying physiology that should have prevented that BP drop?"`
+  },
+  {
+    week: 13, phase: 3,
+    label: 'Intraoperative Monitoring & Safety',
+    desc: 'IOM indications, SSEP/MEP/EMG in surgery, electrical safety, GCP',
+    objectives: [
+      'Explain the rationale for SSEP, MEP, and free-run EMG monitoring in specific surgical procedures',
+      'Describe the alert criteria and decision-making process when IOM signals change intraoperatively',
+      'Apply electrical safety principles to patient risk in the neurophysiology environment'
+    ],
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed lectures on intraoperative monitoring and clinical safety.
+
+Guide through Socratic questioning — never provide answers directly.
+
+Begin with: "During a spinal deformity correction surgery, the neurophysiologist notices that SSEP amplitude has dropped 60% compared to baseline, and the waveform latency has increased by 12%. The surgeon is in the middle of placing instrumentation. Walk me through what you would do next — what does this finding mean physiologically, what are you worried about, and how does this influence the surgical team?"`
+  },
+  {
+    week: 14, phase: 3,
+    label: 'Exam Preparation — Integrated Review',
+    desc: 'Cross-topic integration, clinical reasoning, exam strategy',
+    objectives: [
+      'Integrate knowledge across all unit topics to solve multi-step clinical scenarios',
+      'Apply mechanism-first reasoning to unfamiliar clinical presentations',
+      'Identify and address remaining knowledge gaps before the final examination'
+    ],
+    isExamPrep: true,
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. This is the final tutorial session — an integrated exam preparation session.
+
+Your role is to present challenging cross-topic clinical scenarios and guide the student through systematic reasoning. Cover multiple modalities and connect biological mechanisms to clinical findings.
+
+Begin with: "For our final session, let's work through an integrated case. A 45-year-old woman presents with a 6-month history of progressive difficulty walking, with sensory loss below the knees, absent ankle reflexes, and slowed nerve conduction velocities. Over the past 3 weeks she's also noticed blurring of vision in her right eye that resolved spontaneously. I want you to reason through this entire case — what's the unifying diagnosis you're building toward, and what neurophysiology tests would you order and why?"`
+  }
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let studentName = '';
+let studentID = '';
+let apiKey = '';
+let currentTopic = null;
+let messages = [];
+let exchangeCount = 0;
+let autoSummaryText = '';
+let submitted = false;
+
+// ─────────────────────────────────────────────
+// SCREEN MANAGEMENT
+// ─────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────
+// ENTRY SCREEN
+// ─────────────────────────────────────────────
+function startApp() {
+  studentName = document.getElementById('input-name').value.trim();
+  studentID = document.getElementById('input-sid').value.trim();
+  apiKey = document.getElementById('input-apikey').value.trim();
+
+  if (!studentName) { alert('Please enter your name.'); return; }
+  if (!studentID) { alert('Please enter your student ID.'); return; }
+  if (!apiKey || !apiKey.startsWith('sk-ant')) { alert('Please enter a valid Anthropic API key (starts with sk-ant).'); return; }
+
+  document.getElementById('select-greeting').textContent = `Hello ${studentName.split(' ')[0]} — choose your tutorial topic`;
+  buildTopicList();
+  show('screen-select');
+}
+
+// ─────────────────────────────────────────────
+// TOPIC LIST
+// ─────────────────────────────────────────────
+function buildTopicList() {
+  const container = document.getElementById('topic-list');
+  container.innerHTML = '';
+
+  let currentPhase = null;
+  TOPICS.forEach(t => {
+    if (t.phase !== currentPhase) {
+      currentPhase = t.phase;
+      const phaseNames = { 1: 'Phase 1 — Foundations', 2: 'Phase 2 — Clinical Testing', 3: 'Phase 3 — Advanced & Integrated' };
+      const label = document.createElement('div');
+      label.className = 'phase-label';
+      label.textContent = phaseNames[t.phase];
+      container.appendChild(label);
+      const grid = document.createElement('div');
+      grid.className = 'topic-grid';
+      grid.id = `phase-grid-${t.phase}`;
+      container.appendChild(grid);
+    }
+    const grid = document.getElementById(`phase-grid-${t.phase}`);
+    const card = document.createElement('div');
+    card.className = 'topic-card' + (t.isExamPrep ? ' gold-accent' : '');
+    card.innerHTML = `
+      <div class="topic-week">W${t.week}</div>
+      <div class="topic-body">
+        <div class="topic-title">${t.label}</div>
+        <div class="topic-desc">${t.desc}</div>
+      </div>
+      <div class="topic-arrow">›</div>`;
+    card.onclick = () => startTopic(t);
+    grid.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────────────────
+// START TOPIC
+// ─────────────────────────────────────────────
+function startTopic(topic) {
+  currentTopic = topic;
+  messages = [];
+  exchangeCount = 0;
+  submitted = false;
+  autoSummaryText = '';
+
+  document.getElementById('chat-week-label').textContent = `Week ${topic.week}`;
+  document.getElementById('chat-topic-title').textContent = topic.label;
+  document.getElementById('chat-window').innerHTML = '';
+  document.getElementById('user-input').value = '';
+  document.getElementById('btn-end').disabled = true;
+
+  updateBadge();
+  show('screen-chat');
+
+  // Send opener
+  appendTyping();
+  callClaude(topic.opener, []).then(reply => {
+    removeTyping();
+    addMessage('assistant', reply);
+  }).catch(() => {
+    removeTyping();
+    addMessage('assistant', 'I had trouble connecting. Please check your API key and try refreshing.');
+  });
+}
+
+function goBack() {
+  if (exchangeCount > 0) {
+    if (!confirm('Return to topic list? Your current session will be lost.')) return;
+  }
+  show('screen-select');
+}
+
+// ─────────────────────────────────────────────
+// CHAT
+// ─────────────────────────────────────────────
+function updateBadge() {
+  const badge = document.getElementById('exchange-badge');
+  const text = document.getElementById('exchange-text');
+  const unlocked = exchangeCount >= 6;
+  text.textContent = unlocked ? `${exchangeCount} exchanges ✓` : `${exchangeCount} / 6 exchanges`;
+  badge.className = 'exchange-badge' + (unlocked ? ' unlocked' : '');
+  document.getElementById('btn-end').disabled = !unlocked;
+}
+
+function addMessage(role, content) {
+  const win = document.getElementById('chat-window');
+  const div = document.createElement('div');
+  div.className = `msg msg-${role}`;
+  const label = role === 'assistant' ? 'Tutor' : 'You';
+  div.innerHTML = `<div class="msg-label">${label}</div><div class="msg-bubble">${escHtml(content)}</div>`;
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+  messages.push({ role, content });
+}
+
+function appendTyping() {
+  const win = document.getElementById('chat-window');
+  const div = document.createElement('div');
+  div.className = 'msg msg-assistant';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-label">Tutor</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+async function sendMessage() {
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = '42px';
+  document.getElementById('btn-send').disabled = true;
+
+  addMessage('user', text);
+  exchangeCount++;
+  updateBadge();
+
+  appendTyping();
+
+  try {
+    const apiMessages = messages.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
+    const reply = await callClaude(currentTopic.opener, apiMessages);
+    removeTyping();
+    addMessage('assistant', reply);
+  } catch (e) {
+    removeTyping();
+    addMessage('assistant', 'I had trouble responding. Please try again.');
+  }
+
+  document.getElementById('btn-send').disabled = false;
+  input.focus();
+}
+
+async function callClaude(systemPrompt, history) {
+  const response = await fetch(ANTHROPIC_API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-calls': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 600,
+      system: systemPrompt,
+      messages: history.length > 0 ? history : [{ role: 'user', content: 'Begin the session.' }]
+    })
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return data.content[0].text;
+}
+
+// ─────────────────────────────────────────────
+// END SESSION & SUBMIT SCREEN
+// ─────────────────────────────────────────────
+async function endSession() {
+  document.getElementById('btn-end').disabled = true;
+  document.getElementById('btn-back').disabled = true;
+  document.getElementById('auto-summary').textContent = 'Generating summary…';
+
+  const t = currentTopic;
+  document.getElementById('submit-heading').textContent = `Week ${t.week}: ${t.label}`;
+  document.getElementById('submit-sub').textContent = `Session with ${studentName} · ${exchangeCount} exchanges · ${new Date().toLocaleDateString('en-AU', {day:'numeric', month:'long', year:'numeric'})}`;
+
+  show('screen-submit');
+  document.getElementById('status-success').style.display = 'none';
+  document.getElementById('status-error').style.display = 'none';
+  document.getElementById('status-copied').style.display = 'none';
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('btn-submit-label').textContent = 'Submit to unit record';
+
+  // Generate summary
+  try {
+    const transcript = messages.map(m => `${m.role === 'assistant' ? 'Tutor' : 'Student'}: ${m.content}`).join('\n\n');
+    const summaryPrompt = `You are summarising a Socratic tutorial session for a student record in HUMB3008 Clinical Neurophysiology.
+
+Write a factual 3–4 sentence paragraph describing what the student engaged with in this session. Mention the specific concepts discussed, any correct reasoning the student demonstrated, and any areas where understanding was still developing. Do not use bullet points. Write in third person (e.g. "The student...").
+
+Topic: ${t.label}
+Transcript:
+${transcript}`;
+
+    const summary = await callClaude(summaryPrompt, [{ role: 'user', content: 'Generate the summary now.' }]);
+    autoSummaryText = summary;
+    document.getElementById('auto-summary').textContent = summary;
+  } catch (e) {
+    autoSummaryText = '';
+    document.getElementById('auto-summary').textContent = 'Summary generation failed — please describe your session in the reflection box below.';
+  }
+}
+
+// ─────────────────────────────────────────────
+// SUBMIT TO POWER AUTOMATE
+// ─────────────────────────────────────────────
+async function submitSession() {
+  if (submitted) return;
+
+  const reflection = document.getElementById('reflection-input').value.trim();
+  if (!reflection) {
+    alert('Please write a reflection before submitting.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  const spinner = document.getElementById('spinner');
+  const label = document.getElementById('btn-submit-label');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  label.textContent = 'Submitting…';
+
+  document.getElementById('status-success').style.display = 'none';
+  document.getElementById('status-error').style.display = 'none';
+
+  const payload = {
+    studentName,
+    studentID,
+    week: currentTopic.week,
+    topic: currentTopic.label,
+    exchanges: exchangeCount,
+    summary: autoSummaryText || document.getElementById('auto-summary').textContent,
+    reflection,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    await fetch(SUBMISSION_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    // no-cors mode: we can't read the response, but if we got here without throwing the request was sent
+    submitted = true;
+    spinner.style.display = 'none';
+    label.textContent = '✓ Submitted';
+    document.getElementById('status-success').style.display = 'block';
+  } catch (e) {
+    spinner.style.display = 'none';
+    label.textContent = 'Submit to unit record';
+    btn.disabled = false;
+    document.getElementById('status-error').style.display = 'block';
+    console.error('Submission error:', e);
+  }
+}
+
+// ─────────────────────────────────────────────
+// CLIPBOARD FALLBACK
+// ─────────────────────────────────────────────
+function copyFallback() {
+  const summary = autoSummaryText || document.getElementById('auto-summary').textContent;
+  const reflection = document.getElementById('reflection-input').value.trim();
+  const t = currentTopic;
+  const dateStr = new Date().toLocaleDateString('en-AU', {day:'numeric', month:'long', year:'numeric'});
+
+  const text = `HUMB3008 Clinical Neurophysiology — Tutorial Engagement Submission
+Week ${t.week}: ${t.label}
+Student: ${studentName} (${studentID})
+Date: ${dateStr}
+Exchanges: ${exchangeCount}
+
+SESSION SUMMARY (auto-generated)
+${summary}
+
+STUDENT REFLECTION
+${reflection || '[No reflection entered]'}`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('status-copied').style.display = 'block';
+    setTimeout(() => { document.getElementById('status-copied').style.display = 'none'; }, 4000);
+  }).catch(() => {
+    alert('Copy failed — please manually select and copy the text from the summary and reflection boxes above.');
+  });
+}
+
+// ─────────────────────────────────────────────
+// EVENT LISTENERS
+// ─────────────────────────────────────────────
+document.getElementById('btn-send').addEventListener('click', sendMessage);
+
+document.getElementById('user-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+document.getElementById('user-input').addEventListener('input', function() {
+  this.style.height = '42px';
+  this.style.height = Math.min(this.scrollHeight, 110) + 'px';
+});
+
+document.getElementById('btn-end').addEventListener('click', endSession);
+</script>
+</body>
+</html>
