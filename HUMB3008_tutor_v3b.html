@@ -381,6 +381,36 @@ body {
 }
 .btn-back2:hover { color: var(--text-muted); }
 
+/* ── TTS PLAY BUTTON ── */
+.btn-tts {
+  background: none; border: 1px solid var(--border-md);
+  border-radius: 6px; padding: 3px 8px; cursor: pointer;
+  font-size: 11px; font-family: 'Arial', sans-serif; color: var(--text-hint);
+  margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-tts:hover { border-color: var(--green); color: var(--green); }
+.btn-tts.speaking { border-color: var(--gold); color: var(--gold); }
+
+/* ── MIC BUTTON ── */
+.btn-mic {
+  width: 42px; height: 42px; flex-shrink: 0;
+  background: var(--surface2); border: 1.5px solid var(--border-md);
+  border-radius: var(--radius); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn-mic:hover { border-color: var(--green); }
+.btn-mic.recording { background: #fee2e2; border-color: #ef4444; animation: pulse-mic 1s infinite; }
+.btn-mic svg { width: 18px; height: 18px; }
+@keyframes pulse-mic {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+}
+
+/* ── NO SPEECH SUPPORT WARNING ── */
+.speech-unsupported { display: none; font-size: 11px; font-family: 'Arial', sans-serif; color: var(--text-hint); margin-top: 6px; }
+
 @media (max-width: 520px) {
   .entry-card { padding: 24px 20px; }
   .form-row { grid-template-columns: 1fr; }
@@ -461,9 +491,16 @@ body {
     <div class="chat-window" id="chat-window"></div>
 
     <div class="chat-input-row">
-      <textarea class="chat-textarea" id="user-input" placeholder="Type your response…" rows="1"></textarea>
+      <button class="btn-mic" id="btn-mic" title="Hold to talk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="2" width="6" height="11" rx="3"/>
+          <path d="M19 10a7 7 0 0 1-14 0M12 19v3M8 22h8"/>
+        </svg>
+      </button>
+      <textarea class="chat-textarea" id="user-input" placeholder="Type or hold mic to speak…" rows="1"></textarea>
       <button class="btn-send" id="btn-send">Send</button>
     </div>
+    <div class="speech-unsupported" id="speech-unsupported">Speech input not supported in this browser — use Chrome or Edge.</div>
 
     <div class="chat-actions">
       <button class="btn-end" id="btn-end" disabled>End session &amp; submit →</button>
@@ -813,6 +850,13 @@ function addMessage(role, content) {
   div.className = `msg msg-${role}`;
   const label = role === 'assistant' ? 'Tutor' : 'You';
   div.innerHTML = `<div class="msg-label">${label}</div><div class="msg-bubble">${escHtml(content)}</div>`;
+  if (role === 'assistant') {
+    const playBtn = document.createElement('button');
+    playBtn.className = 'btn-tts';
+    playBtn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
+    playBtn.onclick = () => speakText(content, playBtn);
+    div.appendChild(playBtn);
+  }
   win.appendChild(div);
   win.scrollTop = win.scrollHeight;
   messages.push({ role, content });
@@ -1011,6 +1055,124 @@ ${reflection || '[No reflection entered]'}`;
 }
 
 // ─────────────────────────────────────────────
+// TEXT-TO-SPEECH (Web Speech API)
+// ─────────────────────────────────────────────
+let currentUtterance = null;
+let activeTtsBtn = null;
+
+function speakText(text, btn) {
+  if (!window.speechSynthesis) return;
+
+  // Stop any current speech
+  if (currentUtterance) {
+    window.speechSynthesis.cancel();
+    if (activeTtsBtn) {
+      activeTtsBtn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
+      activeTtsBtn.classList.remove('speaking');
+    }
+    if (activeTtsBtn === btn) {
+      currentUtterance = null;
+      activeTtsBtn = null;
+      return; // clicking again stops it
+    }
+  }
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.95;
+  utterance.pitch = 1.0;
+
+  // Prefer a good English voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google'))
+    || voices.find(v => v.lang.startsWith('en'));
+  if (preferred) utterance.voice = preferred;
+
+  utterance.onstart = () => {
+    btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Stop`;
+    btn.classList.add('speaking');
+    activeTtsBtn = btn;
+    currentUtterance = utterance;
+  };
+  utterance.onend = () => {
+    btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
+    btn.classList.remove('speaking');
+    currentUtterance = null;
+    activeTtsBtn = null;
+  };
+  utterance.onerror = () => {
+    btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
+    btn.classList.remove('speaking');
+    currentUtterance = null;
+    activeTtsBtn = null;
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// ─────────────────────────────────────────────
+// SPEECH-TO-TEXT (Web Speech API — hold to talk)
+// ─────────────────────────────────────────────
+let recognition = null;
+let isRecording = false;
+
+function initSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('speech-unsupported').style.display = 'block';
+    document.getElementById('btn-mic').style.display = 'none';
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-AU';
+
+  let finalTranscript = '';
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    finalTranscript = '';
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    const input = document.getElementById('user-input');
+    input.value = finalTranscript || interim;
+    input.style.height = '42px';
+    input.style.height = Math.min(input.scrollHeight, 110) + 'px';
+  };
+
+  recognition.onerror = (e) => {
+    stopRecording();
+    if (e.error !== 'aborted') console.warn('Speech recognition error:', e.error);
+  };
+
+  recognition.onend = () => {
+    if (isRecording) recognition.start(); // restart if still holding
+  };
+}
+
+function startRecording() {
+  if (!recognition) return;
+  isRecording = true;
+  const btn = document.getElementById('btn-mic');
+  btn.classList.add('recording');
+  btn.title = 'Release to stop';
+  window.speechSynthesis.cancel(); // stop TTS if playing
+  recognition.start();
+}
+
+function stopRecording() {
+  if (!recognition) return;
+  isRecording = false;
+  const btn = document.getElementById('btn-mic');
+  btn.classList.remove('recording');
+  btn.title = 'Hold to talk';
+  recognition.stop();
+}
+
+// ─────────────────────────────────────────────
 // EVENT LISTENERS
 // ─────────────────────────────────────────────
 document.getElementById('btn-send').addEventListener('click', sendMessage);
@@ -1025,6 +1187,23 @@ document.getElementById('user-input').addEventListener('input', function() {
 });
 
 document.getElementById('btn-end').addEventListener('click', endSession);
+
+// Mic — hold to talk
+const micBtn = document.getElementById('btn-mic');
+micBtn.addEventListener('mousedown', e => { e.preventDefault(); startRecording(); });
+micBtn.addEventListener('mouseup', stopRecording);
+micBtn.addEventListener('mouseleave', stopRecording);
+micBtn.addEventListener('touchstart', e => { e.preventDefault(); startRecording(); }, { passive: false });
+micBtn.addEventListener('touchend', stopRecording);
+micBtn.addEventListener('touchcancel', stopRecording);
+
+// Load voices (Chrome loads them async)
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// Init speech recognition
+initSpeechRecognition();
 </script>
 </body>
 </html>
