@@ -511,7 +511,7 @@ body {
 // ─────────────────────────────────────────────
 // CONFIGURATION — update SUBMISSION_URL with your Power Automate HTTP trigger URL
 // ─────────────────────────────────────────────
-const SUBMISSION_URL = 'https://default5a740cd757684d09ae13f706b09fa2.2c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/81b888c361a84a3993e829a46b75f3d3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kulZsFbVHUSsy4Zq78GlFcoMcOGp2dawKPInlndwd_E';
+const SUBMISSION_URL = 'https://withered-violet-4406.32-djbrown.workers.dev/submit';
 
 const ANTHROPIC_API = 'https://withered-violet-4406.32-djbrown.workers.dev';
 
@@ -963,7 +963,7 @@ async function submitSession() {
   try {
     await fetch(SUBMISSION_URL, {
       method: 'POST',
-      mode: 'no-cors',
+      mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
