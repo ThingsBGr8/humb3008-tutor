@@ -5,10 +5,11 @@ from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from GitHub Pages
+CORS(app)
 
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 ELEVENLABS_API_KEY = os.environ.get('ELEVENLABS_API_KEY', '')
+POWER_AUTOMATE_URL = os.environ.get('POWER_AUTOMATE_URL', '')
 
 # ── Health check ──
 @app.route('/')
@@ -52,11 +53,30 @@ def tts(voice_id):
             json=data,
             timeout=30
         )
-        return Response(
-            res.content,
-            status=res.status_code,
-            mimetype='audio/mpeg'
+        return Response(res.content, status=res.status_code, mimetype='audio/mpeg')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# ── Power Automate submission proxy ──
+# Routes browser submissions to Power Automate server-side,
+# bypassing the CORS/401 issue with direct browser calls.
+@app.route('/api/submit', methods=['POST'])
+def submit():
+    if not POWER_AUTOMATE_URL:
+        return jsonify({'error': 'Power Automate URL not configured'}), 500
+    try:
+        data = request.get_json()
+        res = requests.post(
+            POWER_AUTOMATE_URL,
+            headers={'Content-Type': 'application/json'},
+            json=data,
+            timeout=30
         )
+        # Power Automate returns 202 Accepted on success
+        if res.status_code in (200, 202):
+            return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'error': f'Power Automate returned {res.status_code}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

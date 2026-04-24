@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUMB3008 Socratic Tutor — Solution Architecture</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f8f6; color: #1a1a18; margin: 0; padding: 32px; }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 4px; }
+  .meta { font-size: 13px; color: #6b6b66; margin-bottom: 24px; }
+  .diagram { background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #1B4332; color: #C9972B; padding: 8px 12px; text-align: left; font-weight: 500; }
+  td { padding: 8px 12px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .badge-green { background: #EAF3DE; color: #3B6D11; }
+  .badge-purple { background: #EEEDFE; color: #3C3489; }
+  .badge-gray { background: #f3f3f0; color: #5F5E5A; }
+  h2 { font-size: 14px; font-weight: 500; margin: 20px 0 10px; color: #1B4332; }
+</style>
+</head>
+<body>
+
+<h1>HUMB3008 Clinical Neurophysiology — Socratic Tutor</h1>
+<div class="meta">Solution Architecture · School of Diagnostic and Therapeutic Sciences · Curtin University · April 2026</div>
+
+<div class="diagram">
+<svg width="100%" viewBox="0 0 680 740" role="img">
+<title>HUMB3008 Socratic Tutor Solution Architecture</title>
+<desc>Architecture diagram showing data flows between student browser, Render proxy, Anthropic API, and Microsoft OneDrive storage</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<!-- Student zone -->
+<rect x="30" y="30" width="620" height="130" rx="12" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1" stroke-dasharray="5 4" opacity="0.5"/>
+<text font-size="12" font-family="-apple-system,sans-serif" font-weight="500" x="44" y="50" fill="#0F6E56">Student browser (local device)</text>
+
+<!-- Enterprise zone -->
+<rect x="30" y="390" width="620" height="150" rx="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1" stroke-dasharray="5 4" opacity="0.4"/>
+<text font-size="12" font-family="-apple-system,sans-serif" font-weight="500" x="44" y="410" fill="#3C3489">Curtin enterprise agreement (Microsoft M365)</text>
+
+<!-- External zone -->
+<rect x="30" y="570" width="620" height="120" rx="12" fill="#f3f3f0" stroke="#888780" stroke-width="1" stroke-dasharray="5 4" opacity="0.5"/>
+<text font-size="12" font-family="-apple-system,sans-serif" font-weight="500" x="44" y="590" fill="#5F5E5A">Third-party APIs (Anthropic enterprise agreement)</text>
+
+<!-- Voice input -->
+<rect x="44" y="62" width="140" height="80" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="114" y="95" text-anchor="middle" fill="#085041">Voice input</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="114" y="112" text-anchor="middle" fill="#0F6E56">Web Speech API</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="114" y="128" text-anchor="middle" fill="#0F6E56">browser-local</text>
+
+<!-- Student UI -->
+<rect x="260" y="62" width="160" height="80" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="340" y="90" text-anchor="middle" fill="#085041">Student UI</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="340" y="108" text-anchor="middle" fill="#0F6E56">index.html</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="340" y="124" text-anchor="middle" fill="#0F6E56">GitHub Pages</text>
+
+<!-- TTS -->
+<rect x="496" y="62" width="140" height="80" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="566" y="90" text-anchor="middle" fill="#085041">Voice output</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="566" y="108" text-anchor="middle" fill="#0F6E56">speechSynthesis</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="566" y="124" text-anchor="middle" fill="#0F6E56">browser-local</text>
+
+<!-- Browser arrows -->
+<line x1="184" y1="102" x2="258" y2="102" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="420" y1="102" x2="494" y2="102" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- No data labels -->
+<text font-size="11" font-family="-apple-system,sans-serif" x="114" y="152" text-anchor="middle" fill="#0F6E56">no data stored</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="566" y="152" text-anchor="middle" fill="#0F6E56">no data stored</text>
+
+<!-- Down arrow to proxy -->
+<line x1="340" y1="142" x2="340" y2="218" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="356" y="184" fill="#888780">HTTPS</text>
+
+<!-- Render proxy -->
+<rect x="200" y="220" width="280" height="100" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="340" y="252" text-anchor="middle" fill="#26215C">Render proxy (app.py)</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="340" y="270" text-anchor="middle" fill="#534AB7">render.com — API keys in env vars only</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="340" y="288" text-anchor="middle" fill="#534AB7">/api/chat · /api/submit</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="340" y="336" text-anchor="middle" fill="#534AB7">Keys never exposed to browser</text>
+
+<!-- Proxy to Anthropic -->
+<line x1="270" y1="320" x2="190" y2="616" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="172" y="480" text-anchor="middle" fill="#888780">/api/chat</text>
+
+<!-- Proxy to Power Automate -->
+<line x1="410" y1="320" x2="490" y2="388" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="486" y="362" fill="#888780">/api/submit</text>
+
+<!-- Power Automate -->
+<rect x="430" y="415" width="190" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="525" y="437" text-anchor="middle" fill="#26215C">Power Automate</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="525" y="455" text-anchor="middle" fill="#534AB7">HTTP trigger flow</text>
+
+<!-- PA to OneDrive -->
+<line x1="525" y1="471" x2="525" y2="498" stroke="#534AB7" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- OneDrive -->
+<rect x="430" y="500" width="190" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="525" y="522" text-anchor="middle" fill="#26215C">OneDrive Excel</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="525" y="540" text-anchor="middle" fill="#534AB7">Submission records</text>
+
+<!-- Educator -->
+<rect x="44" y="415" width="160" height="56" rx="8" fill="#f3f3f0" stroke="#888780" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="124" y="437" text-anchor="middle" fill="#2C2C2A">Educator dashboard</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="124" y="455" text-anchor="middle" fill="#5F5E5A">OneDrive / Canvas</text>
+
+<!-- Educator read arrow -->
+<line x1="430" y1="528" x2="206" y2="462" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="310" y="490" text-anchor="middle" fill="#888780">read access</text>
+
+<!-- Data stored note -->
+<rect x="44" y="490" width="350" height="40" rx="6" fill="#EAF3DE" stroke="#97C459" stroke-width="0.5"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="54" y="507" fill="#3B6D11">Data stored: name, student ID, week, topic,</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="54" y="522" fill="#3B6D11">exchange count, summary, reflection, timestamp</text>
+
+<!-- Anthropic API -->
+<rect x="60" y="608" width="230" height="60" rx="8" fill="#f3f3f0" stroke="#888780" stroke-width="0.5"/>
+<text font-size="13" font-weight="500" font-family="-apple-system,sans-serif" x="175" y="630" text-anchor="middle" fill="#2C2C2A">Anthropic Claude API</text>
+<text font-size="11" font-family="-apple-system,sans-serif" x="175" y="648" text-anchor="middle" fill="#5F5E5A">claude-haiku-4-5 · enterprise DPA</text>
+
+<!-- Return arrow -->
+<path d="M175 608 L175 560 L310 560 L310 320" fill="none" stroke="#888780" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="4 3"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="235" y="554" fill="#888780">AI response</text>
+
+<!-- Legend -->
+<line x1="44" y1="716" x2="80" y2="716" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="86" y="720" fill="#5F5E5A">data flow</text>
+<line x1="180" y1="716" x2="216" y2="716" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="222" y="720" fill="#5F5E5A">return / read</text>
+<rect x="340" y="708" width="12" height="12" rx="2" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="358" y="720" fill="#5F5E5A">enterprise agreement</text>
+<rect x="490" y="708" width="12" height="12" rx="2" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+<text font-size="11" font-family="-apple-system,sans-serif" x="508" y="720" fill="#5F5E5A">browser-local</text>
+</svg>
+</div>
+
+<h2>Data flows summary</h2>
+<table>
+<thead><tr><th>Flow</th><th>From</th><th>To</th><th>Data transmitted</th><th>Coverage</th></tr></thead>
+<tbody>
+<tr><td>Conversation</td><td>Student browser</td><td>Render proxy → Anthropic</td><td>Session messages, system prompt</td><td><span class="badge badge-purple">Anthropic enterprise DPA</span></td></tr>
+<tr><td>Submission</td><td>Student browser</td><td>Render proxy → Power Automate → OneDrive</td><td>Name, student ID, week, topic, exchanges, summary, reflection, timestamp</td><td><span class="badge badge-purple">Microsoft M365 enterprise</span></td></tr>
+<tr><td>Voice input</td><td>Student microphone</td><td>Browser only</td><td>Speech transcript (not transmitted)</td><td><span class="badge badge-green">Browser-local, no transfer</span></td></tr>
+<tr><td>Voice output</td><td>Browser speechSynthesis</td><td>Browser only</td><td>Text-to-speech (not transmitted)</td><td><span class="badge badge-green">Browser-local, no transfer</span></td></tr>
+<tr><td>Educator access</td><td>OneDrive Excel</td><td>Educator browser</td><td>Submission records (read only)</td><td><span class="badge badge-purple">Microsoft M365 enterprise</span></td></tr>
+</tbody>
+</table>
+
+<h2>Security controls</h2>
+<table>
+<thead><tr><th>Control</th><th>Implementation</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>API key protection</td><td>Keys stored as environment variables on Render server only — never in client-side code or repository</td><td><span class="badge badge-green">Implemented</span></td></tr>
+<tr><td>Transport encryption</td><td>All connections over HTTPS/TLS</td><td><span class="badge badge-green">Implemented</span></td></tr>
+<tr><td>Student identity</td><td>Self-reported name and student ID for PoC pilot; Canvas LTI authentication planned for production</td><td><span class="badge badge-gray">PoC only</span></td></tr>
+<tr><td>Usage limits</td><td>Spending caps set on Anthropic and ElevenLabs API keys via vendor consoles</td><td><span class="badge badge-green">Implemented</span></td></tr>
+<tr><td>Data minimisation</td><td>Only name, student ID, and session metadata stored — no raw conversation transcripts retained</td><td><span class="badge badge-green">Implemented</span></td></tr>
+<tr><td>Data residency</td><td>Submission data stored in Curtin OneDrive (Microsoft Australian datacentres)</td><td><span class="badge badge-gray">Pending migration from Google Sheets</span></td></tr>
+<tr><td>LMS integration</td><td>Canvas LTI for verified student identity and gradebook passback</td><td><span class="badge badge-gray">Planned — production phase</span></td></tr>
+<tr><td>AWS migration</td><td>Proxy server migration from Render to Curtin Ronin AWS environment</td><td><span class="badge badge-gray">Planned — PoC phase</span></td></tr>
+</tbody>
+</table>
+
+<h2>Pilot scope</h2>
+<table>
+<thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Unit</td><td>HUMB3008 Clinical Neurophysiology</td></tr>
+<tr><td>School</td><td>School of Diagnostic and Therapeutic Sciences, Curtin Medical School</td></tr>
+<tr><td>Cohort size</td><td>~80 students (well within 1,000 student PoC limit)</td></tr>
+<tr><td>Semester</td><td>Semester 2, 2026</td></tr>
+<tr><td>Use case</td><td>Weekly asynchronous tutorial replacement — Socratic AI dialogue, formative engagement tracking</td></tr>
+<tr><td>Assessment</td><td>Pass/fail weekly engagement submission — not summative</td></tr>
+<tr><td>Internal information only</td><td>Yes — no sensitive personal, health, or research data processed</td></tr>
+</tbody>
+</table>
+
+</body>
+</html>
