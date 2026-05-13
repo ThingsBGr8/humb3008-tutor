@@ -421,9 +421,15 @@ body {
 <body>
 
 <header class="site-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#C9972B" opacity="0.3"/>
+      <path d="M9 12l2 2 4-4M12 6v1M12 17v1M6 12H5M19 12h-1" stroke="#C9972B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
   <div class="header-text">
-    <div class="header-unit">Clinical Neurophysiology — Socratic Tutor</div>
-    <div class="header-title">An independent AI-assisted learning tool · Not affiliated with any institution</div>
+    <div class="header-unit">HUMB3008 · School of Diagnostic and Therapeutic Sciences</div>
+    <div class="header-title">Clinical Neurophysiology — Socratic Tutor</div>
   </div>
 </header>
 
@@ -438,12 +444,12 @@ body {
       </div>
       <div class="entry-heading">Welcome to your Socratic tutor</div>
       <div class="entry-desc">
-        Work through at least 6 exchanges with the tutor, then complete a short self-reflection. Your session summary will be displayed for you to save or screenshot.
+        This tutor replaces the face-to-face tutorial. Work through at least 6 exchanges with the tutor before submitting. Your session summary and reflection are submitted directly to the unit record.
       </div>
 
       <div style="margin:16px 0 20px;padding:12px 14px;background:#f3f3f0;border-radius:0 8px 8px 0;border-left:3px solid #1B4332;font-size:12px;color:#5a5a55;line-height:1.65;">
-        <strong style="color:#1a1a18;display:block;margin-bottom:4px;">About this tool</strong>
-        This is an independent, publicly available AI learning tool. It is <strong>not affiliated with, endorsed by, or supported by any university or institution</strong>. Use is entirely voluntary. This tool is powered by <strong>Claude</strong> (Anthropic) for AI dialogue and <strong>ElevenLabs</strong> for voice playback. Your first name and session transcript are processed by Anthropic's API solely to generate tutor responses — no identifying data is stored by this tool. By continuing you acknowledge that you are using a public AI tool at your own discretion.
+        <strong style="color:#1a1a18;display:block;margin-bottom:4px;">Privacy &amp; AI disclosure</strong>
+        This tool is powered by <strong>Claude</strong> (Anthropic) for AI dialogue and <strong>Web Speech API</strong> for voice input/output. Your name, student ID, session transcript, and reflection are collected solely for academic engagement tracking and stored securely in Curtin University systems (OneDrive/Excel). This tool has undergone a Privacy Impact Assessment and Cyber Security Assessment in accordance with Curtin University policy. By proceeding you consent to your session data being processed by third-party AI services for the purpose of generating tutor responses. Contact your unit coordinator with any questions.
       </div>
 
       <div class="form-row">
@@ -451,15 +457,18 @@ body {
           <label>First &amp; Last Name</label>
           <input type="text" id="input-name" placeholder="e.g. Jane Smith" autocomplete="name">
         </div>
-
+        <div class="form-group">
+          <label>Student ID</label>
+          <input type="text" id="input-sid" placeholder="e.g. 20123456" autocomplete="off">
+        </div>
       </div>
 
 
 
-      <button class="btn-start" onclick="startApp()">Continue to topic selection →</button>
+      <button class="btn-start" onclick="startApp()">I understand — continue to topic selection →</button>
 
       <div class="entry-footer">
-        This tool operates independently of any institutional system. No personal data is retained after your session ends.
+        Submission goes directly to the HUMB3008 unit record in OneDrive/Excel. You do not need to copy anything to Canvas.
       </div>
     </div>
   </div>
@@ -524,19 +533,19 @@ body {
       <div class="submit-actions">
         <button class="btn-submit" id="btn-submit" onclick="submitSession()">
           <div class="spinner" id="spinner"></div>
-          <span id="btn-submit-label">Save session record</span>
+          <span id="btn-submit-label">Submit to unit record</span>
         </button>
         <button class="btn-copy-fallback" onclick="copyFallback()">Copy as text (backup)</button>
       </div>
 
       <div class="status-success" id="status-success">
-        ✓ Session submitted successfully. Take a screenshot or copy your summary for your own records.
+        ✓ Submitted successfully. Your session has been recorded in the unit record. You do not need to submit anything to Canvas.
       </div>
       <div class="status-error" id="status-error">
-        Could not reach the submission server. Please use the "Copy as text" button to save your session locally.
+        Could not reach the submission server. Please use the "Copy as text" button and paste into the Canvas assignment instead.
       </div>
       <div class="status-copied" id="status-copied">
-        ✓ Copied to clipboard.
+        ✓ Copied to clipboard. Paste into the Canvas assignment submission box.
       </div>
     </div>
   </div>
@@ -571,7 +580,7 @@ const TOPICS = [
       'Distinguish between the major clinical neurophysiology modalities and the clinical questions each addresses',
       'Describe how signal amplitude, frequency, and timing relate to the underlying biology'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has just completed Lecture 1 on the scope of the profession and the nervous system as an electrical organ.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has just completed Lecture 1 on the scope of the profession and the nervous system as an electrical organ.
 
 Your role is to guide the student to deep understanding through questions and guided reasoning — never simply provide answers. When a student gives an incomplete answer, probe further. When they give a correct answer, push to a higher level of understanding or a new application.
 
@@ -586,7 +595,7 @@ Begin by asking: "Before we dive in — in your own words, why do you think the 
       'Describe volume conduction and how it affects recorded signal morphology',
       'Distinguish near-field from far-field potentials with clinical examples'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has just completed Lecture 2 on bioelectrical signals and extracellular fields.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has just completed Lecture 2 on bioelectrical signals and extracellular fields.
 
 Your role is to guide understanding through questions — never give direct answers. Probe, challenge, and build understanding step by step.
 
@@ -601,7 +610,7 @@ Begin with: "Let's start with something fundamental. When a single axon fires an
       'Describe the effect of high-pass and low-pass filter settings on recorded waveforms',
       'Explain sampling rate and bit depth in the context of clinical neurophysiology signals'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed Lecture 3 on amplifiers, filters, and data acquisition.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 3 on amplifiers, filters, and data acquisition.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -616,7 +625,7 @@ Begin with: "Imagine you're recording an EEG and there's enormous 50 Hz mains in
       'Explain the pathophysiology of MS, GBS, and CTS in terms of the underlying nerve biology',
       'Predict the expected electrophysiological findings for a given pathological mechanism'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed Lectures 5 and 6 covering PNS and CNS anatomy, physiology and disease.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lectures 5 and 6 covering PNS and CNS anatomy, physiology and disease.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -631,7 +640,7 @@ Begin with: "Here's a clinical scenario: a patient presents with progressive lim
       'Calculate and interpret motor and sensory conduction velocity',
       'Distinguish axonal from demyelinating NCS patterns with reference to the underlying pathology'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed Lecture 7 on nerve conduction studies.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 7 on nerve conduction studies.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -646,7 +655,7 @@ Begin with: "Let's work through a real measurement. In a motor NCS of the median
       'Describe the clinical utility of each modality for lesion localisation',
       'Interpret abnormal latency and amplitude findings in terms of pathway pathology'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed Lecture 8 on sensory evoked potentials.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 8 on sensory evoked potentials.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -661,7 +670,7 @@ Begin with: "A patient with known MS has a pattern-reversal VEP. You record a P1
       'Identify and explain normal EEG rhythms (alpha, beta, theta, delta) and their functional significance',
       'Distinguish focal from generalised epileptiform patterns and their clinical correlates'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed lectures on EEG principles and clinical application.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed lectures on EEG principles and clinical application.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -676,7 +685,7 @@ Begin with: "Here's something that surprises most people when they first encount
       'Describe the PSG findings characteristic of OSA, RSBD, and narcolepsy',
       'Explain why each PSG channel is necessary for accurate staging and disorder detection'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed Lecture 11 on polysomnography and sleep disorders.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed Lecture 11 on polysomnography and sleep disorders.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -691,7 +700,7 @@ Begin with: "PSG uses at least three physiological signals to stage sleep — EE
       'Interpret HRV, Valsalva ratio, and orthostatic BP changes in terms of ANS function',
       'Describe how combined autonomic testing builds a profile of dysfunction'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed lectures on autonomic nervous system testing.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed lectures on autonomic nervous system testing.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -706,7 +715,7 @@ Begin with: "A patient stands up from lying and their systolic BP drops 25 mmHg 
       'Describe the alert criteria and decision-making process when IOM signals change intraoperatively',
       'Apply electrical safety principles to patient risk in the neurophysiology environment'
     ],
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. The student has completed lectures on intraoperative monitoring and clinical safety.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. The student has completed lectures on intraoperative monitoring and clinical safety.
 
 Guide through Socratic questioning — never provide answers directly.
 
@@ -722,7 +731,7 @@ Begin with: "During a spinal deformity correction surgery, the neurophysiologist
       'Identify and address remaining knowledge gaps before the final examination'
     ],
     isExamPrep: true,
-    opener: `You are a Socratic tutor for a Clinical Neurophysiology course. This is the final tutorial session — an integrated exam preparation session.
+    opener: `You are a Socratic tutor for HUMB3008 Clinical Neurophysiology at Curtin University. This is the final tutorial session — an integrated exam preparation session.
 
 Your role is to present challenging cross-topic clinical scenarios and guide the student through systematic reasoning. Cover multiple modalities and connect biological mechanisms to clinical findings.
 
@@ -734,7 +743,7 @@ Begin with: "For our final session, let's work through an integrated case. A 45-
 // STATE
 // ─────────────────────────────────────────────
 let studentName = '';
-
+let studentID = '';
 let currentTopic = null;
 let messages = [];
 let exchangeCount = 0;
@@ -755,8 +764,10 @@ function show(id) {
 // ─────────────────────────────────────────────
 function startApp() {
   studentName = document.getElementById('input-name').value.trim();
+  studentID = document.getElementById('input-sid').value.trim();
 
   if (!studentName) { alert('Please enter your name.'); return; }
+  if (!studentID) { alert('Please enter your student ID.'); return; }
 
   document.getElementById('select-greeting').textContent = `Hello ${studentName.split(' ')[0]} — choose your tutorial topic`;
   buildTopicList();
@@ -955,7 +966,7 @@ async function endSession() {
   document.getElementById('status-error').style.display = 'none';
   document.getElementById('status-copied').style.display = 'none';
   document.getElementById('btn-submit').disabled = false;
-  document.getElementById('btn-submit-label').textContent = 'Save session record';
+  document.getElementById('btn-submit-label').textContent = 'Submit to unit record';
 
   // Generate summary
   try {
@@ -1002,6 +1013,7 @@ async function submitSession() {
 
   const payload = {
     studentName,
+    studentID,
     week: currentTopic.week,
     topic: currentTopic.label,
     exchanges: exchangeCount,
@@ -1024,7 +1036,7 @@ async function submitSession() {
     document.getElementById('status-success').style.display = 'block';
   } catch (e) {
     spinner.style.display = 'none';
-    label.textContent = 'Save session record';
+    label.textContent = 'Submit to unit record';
     btn.disabled = false;
     document.getElementById('status-error').style.display = 'block';
     console.error('Submission error:', e);
@@ -1042,7 +1054,7 @@ function copyFallback() {
 
   const text = `HUMB3008 Clinical Neurophysiology — Tutorial Engagement Submission
 Week ${t.week}: ${t.label}
-Student: ${studentName}
+Student: ${studentName} (${studentID})
 Date: ${dateStr}
 Exchanges: ${exchangeCount}
 
@@ -1061,74 +1073,58 @@ ${reflection || '[No reflection entered]'}`;
 }
 
 // ─────────────────────────────────────────────
-// TEXT-TO-SPEECH (ElevenLabs via Cloudflare Worker)
+// TEXT-TO-SPEECH (Web Speech API)
 // ─────────────────────────────────────────────
-const ELEVENLABS_VOICE_ID = 'DYkrAHD8iwork3YSUBbs'; // Paul
-const TTS_URL = `${ANTHROPIC_API}/tts`;
-
-let activeAudio = null;
+let currentUtterance = null;
 let activeTtsBtn = null;
 
-async function speakText(text, btn) {
-  // If already playing, stop it
-  if (activeAudio) {
-    activeAudio.pause();
-    activeAudio = null;
+function speakText(text, btn) {
+  if (!window.speechSynthesis) return;
+
+  // Stop any current speech
+  if (currentUtterance) {
+    window.speechSynthesis.cancel();
     if (activeTtsBtn) {
       activeTtsBtn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
       activeTtsBtn.classList.remove('speaking');
     }
     if (activeTtsBtn === btn) {
+      currentUtterance = null;
       activeTtsBtn = null;
-      return; // clicking again stops
+      return; // clicking again stops it
     }
   }
 
-  // Loading state
-  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg> Loading…`;
-  btn.classList.add('speaking');
-  activeTtsBtn = btn;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.95;
+  utterance.pitch = 1.0;
 
-  try {
-    const response = await fetch(TTS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, voice_id: ELEVENLABS_VOICE_ID })
-    });
+  // Prefer a good English voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google'))
+    || voices.find(v => v.lang.startsWith('en'));
+  if (preferred) utterance.voice = preferred;
 
-    if (!response.ok) throw new Error(`TTS error ${response.status}`);
-
-    const arrayBuffer = await response.arrayBuffer();
-    const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    activeAudio = audio;
-
+  utterance.onstart = () => {
     btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Stop`;
-
-    audio.onended = () => {
-      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
-      btn.classList.remove('speaking');
-      activeAudio = null;
-      activeTtsBtn = null;
-      URL.revokeObjectURL(url);
-    };
-    audio.onerror = () => {
-      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
-      btn.classList.remove('speaking');
-      activeAudio = null;
-      activeTtsBtn = null;
-    };
-
-    await audio.play();
-
-  } catch (err) {
-    console.error('TTS error:', err);
+    btn.classList.add('speaking');
+    activeTtsBtn = btn;
+    currentUtterance = utterance;
+  };
+  utterance.onend = () => {
     btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
     btn.classList.remove('speaking');
+    currentUtterance = null;
     activeTtsBtn = null;
-    activeAudio = null;
-  }
+  };
+  utterance.onerror = () => {
+    btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Listen`;
+    btn.classList.remove('speaking');
+    currentUtterance = null;
+    activeTtsBtn = null;
+  };
+
+  window.speechSynthesis.speak(utterance);
 }
 
 // ─────────────────────────────────────────────
@@ -1218,6 +1214,11 @@ micBtn.addEventListener('mouseleave', stopRecording);
 micBtn.addEventListener('touchstart', e => { e.preventDefault(); startRecording(); }, { passive: false });
 micBtn.addEventListener('touchend', stopRecording);
 micBtn.addEventListener('touchcancel', stopRecording);
+
+// Load voices (Chrome loads them async)
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
 
 // Init speech recognition
 initSpeechRecognition();
